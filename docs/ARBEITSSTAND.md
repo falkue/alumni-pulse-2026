@@ -33,7 +33,9 @@
 - Hochschulsicht mit Mandantentrennung. Fertige Auswertungen:
   - „Who answered?“ (Frage 1, Alter): Alterspyramide und Median-Alter im Vergleich mit
     Wellen-Regler 2022–2026.
-  - „Career & salary“: Sankey „Employment status“ mit KI-Interpretation (in Arbeit, siehe unten).
+  - „Career & salary“: Sankey „Employment status“ (Karriere-Frage 1) mit Vergleich Your school /
+    Region / All schools und KI-Interpretation für alle 50 Hochschulen und ALL (im Prototyp
+    von Claude aus synthetischen Aggregaten geschrieben und gegen erfundene Zahlen geprüft).
 - Design „Circle / PostPlan“ des Projektinhabers mit blauem Akzent, englische Oberfläche,
   Dark Mode, Handy-Ansicht.
 - Demo-Zugänge (`/demo/...`) und Demo-Account „All participating schools (demo)“.
@@ -43,7 +45,6 @@
 
 | Thema | Stand | Nächster Schritt |
 |---|---|---|
-| Karriere-Frage 1: Sankey „Employment status“ im Portal | eingebaut; KI-Interpretationstexte pro Hochschule werden gerade fertig geschrieben und geprüft | im Browser mit S040, S002 und ALL prüfen (Ansicht wechseln über `/demo/...`) |
 | Karriere-Frage 1: zweites Diagramm (Rektorssicht) | drei Iterationen im Chat: Beeswarm v1 (zu komplex), Beeswarm v2 (gefiel nicht), „Von 100 Alumni …“-Raster v3 (Feedback offen) | Entscheidung über v3; Referenz in `docs/DIAGRAMME.md` |
 
 ## Offen und zu entscheiden

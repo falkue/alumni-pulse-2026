@@ -9,7 +9,7 @@ d3-sankey) und folgen dem Circle-Design (`docs/design/`).
 |---|---|---|---|
 | Frage 1 `dem_birth_year` (Alter) | Alterspyramide: eigene Hochschule gegen wählbaren Benchmark, Kleinzellen „< 3“ schraffiert | **im Portal** | `portal/src/ui/school/demographics/` · Spez. `docs/mockups/q1_age_charts_spec.md` |
 | Frage 1 `dem_birth_year` | Median-Alter gegen anonyme Peers (Punktdiagramm) mit Wellen-Regler 2022–2026 und Trendlinie | **im Portal** (Vorjahre simuliert) | dto. · Referenz `docs/mockups/q1_age_benchmark_longitudinal_reference.html` |
-| Karriere Frage 1 `job_employed` + Folgefragen | Sankey „Employment status“ (Befragte → beschäftigt/nicht → Art), Vergleich Your school / Region / All | **im Portal** mit KI-Interpretation (Abnahme im Browser offen) | `portal/src/ui/school/career/` · Referenz `docs/mockups/career_q1_sankey_reference.html` |
+| Karriere Frage 1 `job_employed` + Folgefragen | Sankey „Employment status“ (Befragte → beschäftigt/nicht → Art), Vergleich Your school / Region / All | **im Portal** mit KI-Interpretation | `portal/src/ui/school/career/` · Referenz `docs/mockups/career_q1_sankey_reference.html` |
 | Karriere Frage 1 | Rektorssicht v1: Beeswarm aller Hochschulen nach Region mit Konfidenzband und Mix-Balken | verworfen („zu komplex“) | nur im Chat |
 | Karriere Frage 1 | Rektorssicht v2: Klartext-Satz und Ampel, einspuriger Beeswarm, Hantel-Zeilen „woran liegt’s“ | verworfen („gefällt nicht“) | nur im Chat |
 | Karriere Frage 1 | Rektorssicht v3: „Von 100 Alumni …“, zwei 10×10-Raster eigene Hochschule gegen Vergleichsgruppe | **Feedback offen** | nur im Chat; auf Wunsch neu erzeugen |
