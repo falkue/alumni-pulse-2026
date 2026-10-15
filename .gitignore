@@ -1,4 +1,4 @@
-.venv/
+.venv
 __pycache__/
 .work/
 # Real survey data never goes into version control

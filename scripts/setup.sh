@@ -28,6 +28,8 @@ else
   [ -d "$VENV" ] || "$PY" -m venv "$VENV"
   "$VENV/bin/pip" install -q -r requirements.txt
 fi
+# replace a missing or dangling link (e.g. one copied from another computer)
+if [ -L .venv ] && [ ! -e .venv ]; then rm .venv; fi
 [ -e .venv ] || ln -s "$VENV" .venv
 
 echo "2/5  Python packages installed: $(.venv/bin/python -c 'import pandas; print("pandas", pandas.__version__)')"
