@@ -1,0 +1,20 @@
+{
+  "school_id": "S009",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Part-time work of 14.3 % stands out, while full-time work is 69.0 %.",
+  "how_to_read": "Left: all respondents; middle: employed versus not employed; right: the detailed situation. Band widths show each group's share of respondents. The hatched 'Hidden' flow covers groups with fewer than 3 people.",
+  "key_findings": [
+    "Employment totals 92.9 %, of which 69.0 % full-time and 14.3 % part-time.",
+    "Not employed totals 7.1 %; no one is retired or studying.",
+    "Self-employment, other employment, seeking work, not seeking work and other situation are hidden."
+  ],
+  "benchmark": "Overall employment is close to the benchmarks, 0.3 pp below the European region (93.2 %) and 0.3 pp above all schools (92.6 %). Full-time work is 5.2 pp below the region (74.2 %), while part-time work is 4.1 pp above the regional 10.2 %.",
+  "caveats": "With n = 42, a single person moves a share by about 2 points, and five cells are hidden.",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:38:15Z"
+}

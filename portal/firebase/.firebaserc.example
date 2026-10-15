@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "demo-alumni-pulse",
+    "staging": "REPLACE-WITH-STAGING-PROJECT-ID",
+    "prod": "REPLACE-WITH-PROD-PROJECT-ID"
+  }
+}

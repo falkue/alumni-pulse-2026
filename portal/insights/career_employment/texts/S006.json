@@ -1,0 +1,20 @@
+{
+  "school_id": "S006",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Full-time work stands at 70.0 %, below the benchmarks; several groups are hidden.",
+  "how_to_read": "Left: all respondents; middle: employed versus not employed; right: the detailed situation. Band widths show each group's share of respondents. The hatched 'Hidden' flow marks groups with fewer than 3 people, whose values are not shown.",
+  "key_findings": [
+    "Full-time employment is 70.0 %.",
+    "No one reports other employment, not seeking work, studying, retirement or another situation (0.0 % each).",
+    "Total employment, part-time, self-employment and seeking work are hidden (fewer than 3 people)."
+  ],
+  "benchmark": "Full-time work is 4.2 pp below the European region (74.2 %) and 4.9 pp below all schools (74.9 %). Because the employment total is hidden, the overall rate cannot be benchmarked.",
+  "caveats": "With n = 30, each person moves percentages by several points, and four cells are hidden.",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:38:15Z"
+}

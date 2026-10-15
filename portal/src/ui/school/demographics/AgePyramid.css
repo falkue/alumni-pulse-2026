@@ -1,0 +1,60 @@
+/* Diagramm A: Alterspyramide. Ausschliesslich Design-Tokens, keine Hex-Farben. */
+.age-pyramid__head { display: flex; flex-direction: column; gap: var(--space-1, 4px); }
+.age-pyramid__title { margin: 0; }
+.age-pyramid__stats { margin: 0; display: flex; flex-wrap: wrap; gap: 4px var(--space-4, 16px); }
+
+/* Segment-Control (Circle): Container --color-selected, aktives Segment als helle Kachel; darf umbrechen */
+.age-pyramid__segments {
+  display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 2px; align-self: flex-start;
+  background: var(--color-selected); border-radius: 8px;
+}
+.age-pyramid__segment {
+  font: inherit; font-size: 12px; line-height: 1; height: 24px; padding: 0 10px;
+  border: 0; border-radius: 6px; background: transparent;
+  color: var(--color-text-secondary); cursor: pointer;
+}
+.age-pyramid__segment[aria-checked='true'] {
+  background: var(--color-surface); color: var(--color-text); font-weight: 600;
+  box-shadow: 0 0 0 .5px var(--color-border-strong), 0 1px 2px color-mix(in srgb, var(--color-border-strong) 60%, transparent);
+}
+.age-pyramid__segment:disabled { opacity: 0.5; cursor: not-allowed; }
+.age-pyramid__segment:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+
+/* SVG: responsiv, nie breiter als die Karte */
+/* Breite höchstens = viewBox-Breite (640), damit die SVG-Schrift auf grossen Bildschirmen nicht wächst */
+.age-pyramid__svg { display: block; width: 100%; height: auto; max-width: 640px; margin: 0 auto; overflow: visible; }
+/* Schrift in viewBox-Einheiten (viewBox 640, Anzeige meist 1:1 -> ca. 11 px) */
+.age-pyramid__text { fill: var(--color-text-secondary); font-family: var(--font-sans); font-size: 11px; font-variant-numeric: tabular-nums; }
+.age-pyramid__text--muted { fill: var(--chart-axis-text); }
+.age-pyramid__text--head { fill: var(--color-text); font-weight: 600; font-size: 12px; }
+.age-pyramid__text--group { fill: var(--chart-axis-text); }
+.age-pyramid__grid { stroke: var(--chart-grid); stroke-width: 1; }
+.age-pyramid__axis { stroke: var(--color-border); stroke-width: 1; }
+.age-pyramid__bar--female, .age-pyramid__bar-cover.age-pyramid__bar--female { fill: var(--chart-female); }
+.age-pyramid__bar--male, .age-pyramid__bar-cover.age-pyramid__bar--male { fill: var(--chart-male); }
+.age-pyramid__bar-cover { pointer-events: none; }
+.age-pyramid__bar:hover, .age-pyramid__bar:focus { opacity: 0.85; outline: none; stroke: var(--color-text); stroke-width: 1.5; }
+.age-pyramid__bar--hidden { stroke: var(--chart-hatch); stroke-width: 1; stroke-dasharray: 2 2; }
+.age-pyramid__hatch-line { stroke: var(--chart-hatch); stroke-width: 1.5; }
+.age-pyramid__marker { stroke: var(--chart-marker); stroke-width: 2.5; stroke-linecap: round; }
+
+/* Legende */
+.age-pyramid__legend { display: flex; flex-wrap: wrap; gap: 4px var(--space-4, 16px); font-size: var(--font-size-sm); color: var(--color-text-muted); }
+.age-pyramid__legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.age-pyramid__swatch { width: 14px; height: 10px; border-radius: 2px; }
+.age-pyramid__swatch--female { background: var(--chart-female); }
+.age-pyramid__swatch--male { background: var(--chart-male); }
+.age-pyramid__swatch--bench { background: none; width: 3px; height: 14px; border-left: 2.5px solid var(--chart-marker); border-radius: 0; }
+
+@media (max-width: 760px) {
+  /* Handy: Pill-Gruppe, Segmente umbrechen */
+  /* Handy: kein gemeinsamer Container (sähe umbrechend wie ein Klecks aus),
+     sondern einzelne getönte Pills; aktive Pill weiss mit Haarlinie */
+  .age-pyramid__segments { background: transparent; padding: 0; gap: var(--space-1); }
+  .age-pyramid__segment { border-radius: var(--radius-pill); background: var(--color-selected); }
+  .age-pyramid__stats { flex-direction: column; gap: 2px; }
+  /* SVG (viewBox 640) wird auf ~300 px verkleinert -> Schrift in viewBox-Einheiten
+     vergrössern, damit sie gerendert ~11 px gross bleibt */
+  .age-pyramid__text { font-size: 22px; }
+  .age-pyramid__text--head { font-size: 24px; }
+}

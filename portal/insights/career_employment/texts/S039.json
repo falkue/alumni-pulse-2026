@@ -1,0 +1,19 @@
+{
+  "school_id": "S039",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Self-employment is 17.1 %, far above benchmarks, while full-time work is 65.9 %.",
+  "how_to_read": "The flows run from all respondents (left) through employed or not employed (middle) to the detailed situation (right); widths show the share of respondents. The hatched 'Hidden' flow marks groups of fewer than 3 people, whose values are not shown.",
+  "key_findings": [
+    "65.9 % work full-time and 17.1 % are self-employed.",
+    "Not seeking work, students, retired and other situations are 0.0 %; the employed total and further groups are hidden (fewer than 3 people)."
+  ],
+  "benchmark": "Full-time work is 8.7 pp below Asia (74.6 %) and 9.0 pp below all schools (74.9 %). Self-employment is 7.9 pp above the region (9.2 %) and 9.1 pp above all schools (8.0 %); total employment is hidden and not compared.",
+  "caveats": "Based on n = 41; the employment total, part-time and seeking work are hidden (fewer than 3 people).",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:38:13Z"
+}

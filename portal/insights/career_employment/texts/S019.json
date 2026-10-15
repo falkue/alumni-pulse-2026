@@ -1,0 +1,19 @@
+{
+  "school_id": "S019",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Full-time work of 75.0 % mirrors the benchmarks; part-time work is a touch higher.",
+  "how_to_read": "Left: all respondents; middle: employed or not; right: detailed situation, widths showing share of respondents. Branch totals are hidden, so branches show a lower bound (≥) and the hatched 'Hidden' stream runs directly from Respondents.",
+  "key_findings": [
+    "Full-time work is 75.0 % and part-time 10.7 %; seeking work, student and other situation are 0.0 %.",
+    "Both totals, self-employed, other employment, not seeking work and retired are hidden (fewer than 3 people)."
+  ],
+  "benchmark": "Full-time work is 0.8 pp above the regional 74.2 % and 0.1 pp above the 74.9 % across all schools. Part-time work is 0.5 pp above the region (10.2 %) and 2.8 pp above all schools (7.9 %).",
+  "caveats": "With n = 28, one person moves percentages by several points, so small gaps carry little weight.",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:42:35Z"
+}

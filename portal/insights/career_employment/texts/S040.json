@@ -1,0 +1,19 @@
+{
+  "school_id": "S040",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Only 72.4 % are employed, well below both benchmarks, and 17.2 % are still seeking work.",
+  "how_to_read": "Flows run from all respondents (left) to employed or not employed (middle) and then to detailed situation (right); width is the share of respondents. The hatched \"Hidden\" flow marks situations held back because fewer than 3 people fall into them.",
+  "key_findings": [
+    "Full-time work accounts for 58.6 % of respondents, within the 72.4 % employed.",
+    "Seeking work, at 17.2 %, makes up most of the 27.6 % not employed; no respondents are students or retired."
+  ],
+  "benchmark": "Employment trails the Asia figure (91.3 %) by 18.9 pp and all schools (92.6 %) by 20.2 pp. The seeking-work share sits 10.6 pp above Asia (6.6 %).",
+  "caveats": "With n = 29, each person moves the percentages by several points; part-time, self-employed, other employment and not seeking work are hidden (fewer than 3 people).",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:42:00Z"
+}

@@ -1,0 +1,19 @@
+{
+  "school_id": "S048",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "The main groups are all hidden here, so no employment comparison can be made.",
+  "how_to_read": "Flows run from all respondents (left) to employed or not employed (middle) and then to detailed situation (right); width is the share of respondents. Both totals and the main categories are hidden, so branches show as lower bounds (≥) and a large hatched \"Hidden\" flow leaves \"Respondents\" directly.",
+  "key_findings": [
+    "Only zero values are visible: nobody works part-time, in other employment, or is not seeking work, studying, retired or in another situation.",
+    "Full-time, self-employed and seeking work are hidden (fewer than 3 people)."
+  ],
+  "benchmark": "Asia reports employment of 91.3 % and full-time work of 74.6 %, and all schools 92.6 % and 74.9 %. No gap can be stated because this school's corresponding values are hidden.",
+  "caveats": "With n = 20, each person moves the percentages by several points, and the chart is dominated by hidden cells.",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:42:00Z"
+}

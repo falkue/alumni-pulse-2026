@@ -1,0 +1,19 @@
+{
+  "school_id": "S018",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Employment of 92.5 % matches regional and overall levels; part-time work is the notable tilt.",
+  "how_to_read": "Left: all respondents; middle: employed or not; right: detailed situation, with widths showing share of respondents. The hatched 'Hidden' stream marks the not-employed cells with fewer than 3 people.",
+  "key_findings": [
+    "92.5 % are employed: 72.5 % full-time, 12.5 % part-time and 7.5 % self-employed; the remaining 7.5 % are not employed.",
+    "Seeking work, not seeking work and other situation are hidden (fewer than 3 people); student and retired are 0.0 %."
+  ],
+  "benchmark": "Employment is 0.7 pp below the region (93.2 %) and 0.1 pp below all schools (92.6 %). Part-time work is higher by 2.3 pp than the regional 10.2 % and by 4.6 pp than the overall 7.9 %.",
+  "caveats": "With n = 40, each person moves percentages noticeably; the make-up of the not-employed share is partly hidden.",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:42:35Z"
+}

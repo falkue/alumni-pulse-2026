@@ -1,0 +1,19 @@
+{
+  "school_id": "S020",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Full-time work of 74.1 % is essentially level with the region and all schools.",
+  "how_to_read": "Left: all respondents; middle: employed or not; right: detailed situation, with widths showing share of respondents. Branch totals are hidden, so branches show a lower bound (≥) and the hatched 'Hidden' stream runs directly from Respondents.",
+  "key_findings": [
+    "Full-time work is 74.1 % of respondents; other employment, not seeking work, student and retired are each 0.0 %.",
+    "Part-time, self-employed, seeking work, other situation and both totals are hidden (fewer than 3 people)."
+  ],
+  "benchmark": "The full-time share is 0.1 pp below the regional 74.2 % and 0.8 pp below the 74.9 % across all schools. Most other branches cannot be compared because they are hidden.",
+  "caveats": "With n = 27, percentages move by several points per person, and the hidden cells leave the picture incomplete.",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:42:35Z"
+}

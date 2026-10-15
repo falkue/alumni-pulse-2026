@@ -1,0 +1,411 @@
+/**
+ * ENTWURF / SKIZZE – Firebase-Adapter für AuthService + DataService (src/services/ports.ts)
+ * =========================================================================================
+ *
+ * Diese Datei endet bewusst auf `.txt`: Das Paket `firebase` ist noch nicht installiert,
+ * die Datei soll weder kompilieren noch von Vitest/tsc erfasst werden.
+ *
+ * Aktivieren (siehe docs/FIREBASE_MIGRATION.md):
+ *   1. npm i firebase
+ *   2. Datei umbenennen in firebaseAdapter.ts
+ *   3. In src/services/index.ts per VITE_BACKEND=firebase umschalten
+ *
+ * Grundsätze
+ *   - Die UI kennt nur die Ports. Alles Firebase-Spezifische (Timestamp, FirebaseError,
+ *     Claims) bleibt in dieser Datei und wird hier in Domänen-Typen übersetzt.
+ *   - Rechteprüfungen aus src/domain/access.ts laufen zusätzlich im Client (schnelle,
+ *     verständliche Fehlermeldung). Verbindlich sind die Security Rules
+ *     (firebase/firestore.rules) – der Client kann sie nicht umgehen.
+ *   - Zeitstempel: Firestore speichert `Timestamp`, die Domäne ISO-8601-Strings.
+ *     Umrechnung NUR über toIso()/fromIso() unten.
+ */
+import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
+import {
+  getAuth,
+  connectAuthEmulator,
+  onAuthStateChanged,
+  signOut as fbSignOut,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink,
+  signInWithPopup,
+  OAuthProvider,
+  type Auth,
+  type User,
+} from 'firebase/auth';
+import {
+  getFirestore,
+  connectFirestoreEmulator,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  writeBatch,
+  serverTimestamp,
+  Timestamp,
+  type DocumentSnapshot,
+  type Firestore,
+} from 'firebase/firestore';
+import { getFunctions, connectFunctionsEmulator, httpsCallable } from 'firebase/functions';
+import { FirebaseError } from 'firebase/app';
+
+import { assertAdmin, assertCanReadSchool, canSignIn, validateInvite } from '../../domain/access';
+import { PortalError } from '../../domain/types';
+import type { AccountStatus, PortalErrorCode, Role, School, Session, UserAccount } from '../../domain/types';
+import type { AuthService, DataService } from '../ports';
+
+// -----------------------------------------------------------------------------
+// Konfiguration (Vite-Umgebungsvariablen, siehe .env.example in der Migrationsdoku)
+// -----------------------------------------------------------------------------
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+};
+const USE_EMULATORS = import.meta.env.VITE_FIREBASE_USE_EMULATORS === 'true';
+const FUNCTIONS_REGION = 'europe-west6';
+
+/** localStorage-Schlüssel für die E-Mail beim E-Mail-Link-Login (Firebase-Empfehlung). */
+const EMAIL_FOR_SIGN_IN_KEY = 'alumniPulse.emailForSignIn';
+
+// -----------------------------------------------------------------------------
+// Mapping Firestore <-> Domäne
+// -----------------------------------------------------------------------------
+
+/** Firestore-Timestamp (oder bereits ISO-String) -> ISO-8601-String. */
+export function toIso(value: unknown): string {
+  if (value instanceof Timestamp) return value.toDate().toISOString();
+  if (typeof value === 'string') return value; // Altbestand / Import als String
+  if (value instanceof Date) return value.toISOString();
+  // null kommt bei noch nicht bestätigtem serverTimestamp() vor; durch
+  // snapshot.data({ serverTimestamps: 'estimate' }) wird das vermieden.
+  throw new PortalError('invalid-argument', 'Invalid timestamp in document.');
+}
+
+/** ISO-8601-String -> Firestore-Timestamp (für Import-Skripte / Tests). */
+export function fromIso(iso: string): Timestamp {
+  return Timestamp.fromDate(new Date(iso));
+}
+
+function snapData(snap: DocumentSnapshot): Record<string, unknown> {
+  // 'estimate': lokale Schätzung statt null, solange serverTimestamp() aussteht.
+  const data = snap.data({ serverTimestamps: 'estimate' });
+  if (!data) throw new PortalError('not-found', 'Dokument nicht gefunden.');
+  return data;
+}
+
+/** users/{uid} -> UserAccount (uid = Dokument-ID). */
+export function toUserAccount(snap: DocumentSnapshot): UserAccount {
+  const d = snapData(snap);
+  return {
+    uid: snap.id,
+    email: String(d.email),
+    displayName: String(d.displayName),
+    role: d.role as Role,
+    schoolId: (d.schoolId as string | null) ?? null,
+    status: d.status as AccountStatus,
+    createdAt: toIso(d.createdAt),
+    updatedAt: toIso(d.updatedAt),
+    updatedBy: (d.updatedBy as string | null) ?? null,
+  };
+}
+
+/** schools/{schoolId} -> School. Felder entsprechen 1:1 dem Interface. */
+export function toSchool(snap: DocumentSnapshot): School {
+  const d = snapData(snap);
+  return { ...(d as unknown as School), schoolId: snap.id };
+}
+
+/** FirebaseError -> PortalError (Codes, die die UI kennt). */
+export function toPortalError(err: unknown): PortalError {
+  if (err instanceof PortalError) return err;
+  if (err instanceof FirebaseError) {
+    const map: Record<string, PortalErrorCode> = {
+      'permission-denied': 'permission-denied',
+      'firestore/permission-denied': 'permission-denied',
+      'storage/unauthorized': 'permission-denied',
+      'not-found': 'not-found',
+      'invalid-argument': 'invalid-argument',
+      'functions/permission-denied': 'permission-denied',
+      'functions/invalid-argument': 'invalid-argument',
+      'functions/not-found': 'not-found',
+      'functions/already-exists': 'invalid-argument',
+      'auth/user-disabled': 'auth/user-disabled',
+      'auth/user-not-found': 'auth/user-not-found',
+      'auth/invalid-email': 'invalid-argument',
+    };
+    return new PortalError(map[err.code] ?? 'permission-denied', err.message);
+  }
+  return new PortalError('permission-denied', String(err));
+}
+
+/** Führt fn aus und übersetzt Fehler einheitlich. */
+async function guarded<T>(fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn();
+  } catch (err) {
+    throw toPortalError(err);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Factory
+// -----------------------------------------------------------------------------
+
+export interface FirebaseServices {
+  auth: AuthService & {
+    /** NICHT im Port: Phase 1 des E-Mail-Link-Logins (Link versenden). */
+    sendLoginLink(email: string): Promise<void>;
+  };
+  data: DataService;
+}
+
+export function createFirebaseServices(): FirebaseServices {
+  const app: FirebaseApp = getApps()[0] ?? initializeApp(firebaseConfig);
+  const fbAuth: Auth = getAuth(app);
+  const db: Firestore = getFirestore(app);
+  const functions = getFunctions(app, FUNCTIONS_REGION);
+
+  if (USE_EMULATORS) {
+    connectAuthEmulator(fbAuth, 'http://127.0.0.1:9099', { disableWarnings: true });
+    connectFirestoreEmulator(db, '127.0.0.1', 8080);
+    connectFunctionsEmulator(functions, '127.0.0.1', 5001);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Session-Aufbau: Firebase-User + Custom Claims + users-Dokument
+  // ---------------------------------------------------------------------------
+
+  /** Wartet, bis Firebase den gespeicherten Login wiederhergestellt hat. */
+  function waitForUser(): Promise<User | null> {
+    return new Promise((resolve) => {
+      const unsubscribe = onAuthStateChanged(fbAuth, (user) => {
+        unsubscribe();
+        resolve(user);
+      });
+    });
+  }
+
+  /**
+   * Baut die Session.
+   * - role/schoolId kommen aus den Custom Claims (getIdTokenResult().claims).
+   *   Fehlen sie (Claims nach erstem Login noch nicht synchronisiert), wird das
+   *   Token einmal erzwungen erneuert.
+   * - Der Status kommt aus users/{uid} (Quelle der Wahrheit): invited/disabled
+   *   -> abmelden + PortalError, analog zu canSignIn() im lokalen Adapter.
+   */
+  async function buildSession(user: User): Promise<Session> {
+    let token = await user.getIdTokenResult();
+    if (!token.claims.role) token = await user.getIdTokenResult(true);
+    const role = token.claims.role as Role | undefined;
+    const schoolId = (token.claims.schoolId as string | null | undefined) ?? null;
+    if (role !== 'admin' && role !== 'school') {
+      await fbSignOut(fbAuth);
+      throw new PortalError('auth/not-activated', 'Account ist noch nicht eingerichtet.');
+    }
+
+    const account = toUserAccount(await getDoc(doc(db, 'users', user.uid)));
+    const check = canSignIn(account);
+    if (!check.ok) {
+      await fbSignOut(fbAuth);
+      throw new PortalError(check.code);
+    }
+    // Claims und Dokument müssen übereinstimmen. Sonst ist das Token veraltet:
+    // einmal erneuern, damit die Rules (die beides prüfen) wieder greifen.
+    // Die Session folgt dem users-Dokument (Quelle der Wahrheit).
+    if (account.role !== role || account.schoolId !== schoolId) {
+      await user.getIdToken(true);
+    }
+    return {
+      uid: user.uid,
+      role: account.role,
+      schoolId: account.schoolId,
+      displayName: account.displayName || user.displayName || '',
+      email: account.email || user.email || '',
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // AuthService
+  // ---------------------------------------------------------------------------
+  const auth: FirebaseServices['auth'] = {
+    /** Gibt es nur im Demo-Backend. Die UI blendet die Demo-Auswahl über IS_DEMO_BACKEND aus. */
+    async listDemoAccounts() {
+      throw new PortalError('permission-denied', 'Demo-Accounts gibt es im Firebase-Backend nicht.');
+    },
+
+    /** Phase 1 E-Mail-Link: Link senden, E-Mail lokal merken. */
+    async sendLoginLink(email: string) {
+      await guarded(() =>
+        sendSignInLinkToEmail(fbAuth, email, {
+          url: `${window.location.origin}/login/complete`,
+          handleCodeInApp: true,
+        }),
+      );
+      window.localStorage.setItem(EMAIL_FOR_SIGN_IN_KEY, email);
+    },
+
+    /**
+     * Port-Signatur ist signIn(uid) – im Firebase-Backend gibt es keine Anmeldung per uid.
+     * Interpretation des Parameters (Vorschlag, siehe offene Fragen in der Doku):
+     *   - 'sso'           -> SSO per OIDC/SAML-Provider (z. B. SWITCH edu-ID), Popup
+     *   - sonst (E-Mail)  -> Phase 2 E-Mail-Link: aktuelle URL ist der Login-Link
+     */
+    async signIn(identifier: string) {
+      return guarded(async () => {
+        let user: User;
+        if (identifier === 'sso') {
+          // Provider-ID aus Identity Platform, z. B. 'oidc.switch-eduid' oder 'saml.zhaw'.
+          const provider = new OAuthProvider(import.meta.env.VITE_FIREBASE_SSO_PROVIDER_ID);
+          user = (await signInWithPopup(fbAuth, provider)).user;
+        } else {
+          const href = window.location.href;
+          if (!isSignInWithEmailLink(fbAuth, href)) {
+            throw new PortalError('invalid-argument', 'Please open the sign-in link from the email.');
+          }
+          const email = window.localStorage.getItem(EMAIL_FOR_SIGN_IN_KEY) ?? identifier;
+          user = (await signInWithEmailLink(fbAuth, email, href)).user;
+          window.localStorage.removeItem(EMAIL_FOR_SIGN_IN_KEY);
+        }
+        return buildSession(user);
+      });
+    },
+
+    async signOut() {
+      await fbSignOut(fbAuth);
+    },
+
+    /** Nach Reload: wiederhergestellten User + aktuelle Claims/Status lesen. */
+    async currentSession() {
+      const user = fbAuth.currentUser ?? (await waitForUser());
+      if (!user) return null;
+      try {
+        return await buildSession(user);
+      } catch {
+        // Gesperrt/nicht freigeschaltet/Token widerrufen -> keine Sitzung (wie lokal).
+        return null;
+      }
+    },
+  };
+
+  // ---------------------------------------------------------------------------
+  // DataService
+  // ---------------------------------------------------------------------------
+  const data: DataService = {
+    async listSchools(session) {
+      assertAdmin(session);
+      return guarded(async () => {
+        const snap = await getDocs(query(collection(db, 'schools'), orderBy('schoolId')));
+        return snap.docs.map(toSchool);
+      });
+    },
+
+    async getSchool(session, schoolId) {
+      assertCanReadSchool(session, schoolId);
+      return guarded(async () => {
+        const snap = await getDoc(doc(db, 'schools', schoolId));
+        if (!snap.exists()) throw new PortalError('not-found', 'Hochschule nicht gefunden.');
+        return toSchool(snap);
+      });
+    },
+
+    async listAccounts(session, schoolId) {
+      assertAdmin(session);
+      return guarded(async () => {
+        const base = collection(db, 'users');
+        const q = schoolId
+          ? query(base, where('schoolId', '==', schoolId), orderBy('email'))
+          : query(base, orderBy('email'));
+        const snap = await getDocs(q);
+        return snap.docs.map(toUserAccount);
+      });
+    },
+
+    /**
+     * Variante A (Standard in dieser Skizze): Client-Batch
+     *   users/{uid}:     status, updatedAt = serverTimestamp(), updatedBy = session.uid
+     *   auditLog/{auto}: type, targetUid, targetSchoolId, fromStatus, toStatus, actorUid, at
+     * Die Rules prüfen, dass beide Writes zusammenpassen (getAfter).
+     * Die Claims-/Auth-Synchronisation erledigt die Cloud Function onUserWrite.
+     *
+     * Variante B (Alternative): httpsCallable(functions, 'setAccountStatus')({ uid, status })
+     * – Function prüft Admin, schreibt users + auditLog per Admin SDK und setzt Auth-Flags
+     * synchron. Vorteil: Audit erzwingbar, sofortige Sperre. Nachteil: Functions nötig.
+     */
+    async setAccountStatus(session, uid, status) {
+      assertAdmin(session);
+      // Gleiche Vorprüfungen wie localData.setAccountStatus (Rules erzwingen sie ebenfalls).
+      if (status !== 'active' && status !== 'disabled') {
+        throw new PortalError('invalid-argument', 'Erlaubt sind nur active und disabled.');
+      }
+      if (uid === session.uid && status === 'disabled') {
+        throw new PortalError('invalid-argument', 'Der eigene Account kann nicht deaktiviert werden.');
+      }
+      return guarded(async () => {
+        const userRef = doc(db, 'users', uid);
+        const before = await getDoc(userRef);
+        if (!before.exists()) throw new PortalError('not-found', 'Account nicht gefunden.');
+        const current = toUserAccount(before);
+
+        const batch = writeBatch(db);
+        batch.update(userRef, { status, updatedAt: serverTimestamp(), updatedBy: session.uid });
+        batch.set(doc(collection(db, 'auditLog')), {
+          type: 'account.status_changed',
+          targetUid: uid,
+          targetSchoolId: current.schoolId,
+          fromStatus: current.status,
+          toStatus: status,
+          actorUid: session.uid,
+          at: serverTimestamp(),
+        });
+        await batch.commit();
+        // Hinweis: Ändert ein zweiter Admin parallel den Status, schlägt der Commit fehl
+        // (fromStatus passt nicht mehr) -> UI lädt neu. Für Strenge: runTransaction().
+
+        return toUserAccount(await getDoc(userRef));
+      });
+    },
+
+    /**
+     * Einladen braucht das Admin SDK (Auth-User anlegen, Claims setzen, E-Mail-Link
+     * versenden) -> immer Callable Function. Rules verbieten Clients users-create.
+     */
+    async inviteAccount(session, input) {
+      assertAdmin(session);
+      validateInvite(input);
+      return guarded(async () => {
+        const call = httpsCallable<typeof input, { uid: string }>(functions, 'inviteAccount');
+        const { data: result } = await call({
+          schoolId: input.schoolId,
+          email: input.email.trim(),
+          displayName: input.displayName.trim(),
+        });
+        return toUserAccount(await getDoc(doc(db, 'users', result.uid)));
+      });
+    },
+
+    // resetDemoData: absichtlich nicht implementiert (optional im Port, nur Demo).
+  };
+
+  return { auth, data };
+}
+
+// -----------------------------------------------------------------------------
+// Ausblick (noch kein Port): Lesezugriffe auf Kennzahlen, Benchmarks, Reports.
+// Vorschlag für ein späteres AnalyticsService-Interface in ports.ts:
+//
+//   getSection(session, schoolId, sectionId): Promise<AggregateSection>
+//     -> getDoc(doc(db, 'aggregates', schoolId, 'sections', sectionId))
+//   listBenchmarks(session, sectionId): Promise<Benchmark[]>
+//     -> query(collection(db, 'benchmarks'),
+//              where('publishable', '==', true),        // Pflicht wegen Rules!
+//              where('sectionId', '==', sectionId))
+//   getReportPdf(session, schoolId): Promise<Blob>
+//     -> getDoc(doc(db, 'reports', schoolId)) -> storagePath
+//     -> getBlob(ref(getStorage(app), storagePath))  // NICHT getDownloadURL()
+// -----------------------------------------------------------------------------

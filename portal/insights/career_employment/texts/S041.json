@@ -1,0 +1,19 @@
+{
+  "school_id": "S041",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Full-time employment of 76.2 % is marginally above both benchmarks, but the overall split is hidden.",
+  "how_to_read": "Flows run from all respondents (left) to employed or not employed (middle) and then to detailed situation (right); width is the share of respondents. Both branch totals are hidden, so they appear as lower bounds (≥) and a hatched \"Hidden\" flow leaves \"Respondents\" directly.",
+  "key_findings": [
+    "Full-time work reaches 76.2 % of respondents.",
+    "No respondents are in not seeking work, student, retired or other situations; seeking work is hidden (fewer than 3 people)."
+  ],
+  "benchmark": "Full-time work is 1.3 pp above all schools (74.9 %) and 1.6 pp above Asia (74.6 %). Employment and not-employed totals cannot be compared because they are hidden here.",
+  "caveats": "With n = 21, each person moves the percentages by several points, and both totals are hidden (fewer than 3 people).",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:42:00Z"
+}

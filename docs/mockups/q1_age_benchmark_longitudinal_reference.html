@@ -1,0 +1,64 @@
+<!doctype html>
+<!-- REFERENCE ONLY: chat mock-up approved 15 Oct 2026 (old numbers hard-coded, history simulated in the browser).
+     In the portal, read data from aggregates/schools/<id>.json and aggregates/waves_mock/<id>.json instead.
+     In the school view, other schools must stay anonymous (no names). -->
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Q1 age benchmark reference</title>
+<style>:root{--text-primary:#0b0b0b;--text-secondary:#52514e;--text-muted:#898781;--border:rgba(11,11,11,.1);--border-strong:rgba(11,11,11,.2);--surface-1:#f5f4f0;--surface-2:#fff;--radius:8px}
+body{font-family:-apple-system,system-ui,sans-serif;max-width:720px;margin:24px auto;padding:0 16px;background:#fff;color:var(--text-primary)}</style></head><body>
+<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 10px">
+  <label style="font-size:13px;color:var(--text-secondary)">Your school</label><select id="sel"></select>
+  <label style="font-size:13px;color:var(--text-secondary)"><input type="checkbox" id="reg"> Only own region</label>
+  <label style="font-size:13px;color:var(--text-secondary)"><input type="checkbox" id="trail" checked> Show trajectory</label>
+</div>
+<div style="display:flex;gap:10px;align-items:center;margin:0 0 12px"><button id="play">Play</button>
+  <input type="range" id="yr" min="2022" max="2026" step="1" value="2026" style="flex:1"><span id="yrl" style="font-weight:500;min-width:84px;text-align:right"></span></div>
+<div id="kpi" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:12px"></div>
+<div id="dp"></div>
+<div style="font-size:13px;color:var(--text-secondary);margin:18px 0 4px">Trend 2022–2026: your school vs. benchmark (band = middle 50 % of schools)</div>
+<div id="tr"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+const B=[["S001","HWL","Europe",28,28,34,39.8],["S002","LGSM","Europe",40,32,38,45.2],["S003","UAWF","Europe",30,28.2,33,37.8],["S004","RIM","Europe",26,29,35.5,42.2],["S005","RMBA","Europe",30,30,33.5,41],["S006","TUES","Europe",30,28.2,30.5,41.5],["S007","HNM","Europe",20,28.8,31.5,39],["S008","BHU","Europe",40,33,38,44],["S009","TVBS","Europe",42,30,34,45],["S010","PGSB","Europe",30,28,31,37],["S026","HVSB","Americas",43,31,35,44],["S027","LKGM","Americas",43,32.5,37,44],["S028","PCBS","Americas",42,30,34,37.8],["S036","YIBS","Asia",40,35,39,44],["S037","NCUSM","Asia",41,29,33,38],["S039","DIM","Asia",41,34,36,45]];
+const YRS=[2022,2023,2024,2025,2026];
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const R=rng(2026),nrm=()=>{let u=0,v=0;while(!u)u=R();while(!v)v=R();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)},half=v=>Math.round(v*2)/2;
+const S=B.map(d=>{const o={id:d[0],s:d[1],r:d[2],y:{}};const slope=0.25+0.45*nrm();const join=R()<0.7?2022:(R()<0.5?2023:(R()<0.6?2024:2025));
+  let m=d[5],q1=d[4],q3=d[6],n=d[3];for(let i=4;i>=0;i--){const yr=YRS[i];if(yr<join)break;o.y[yr]={m:half(m),q1:half(q1),q3:half(q3),n:Math.max(12,Math.round(n))};
+  const st=slope+0.6*nrm();m-=st;q1-=st*0.8+0.3*nrm();q3-=st*1.1+0.4*nrm();if(q1>m-1)q1=m-1;if(q3<m+1)q3=m+1;n*=0.82+0.12*R();}o.join=join;return o});
+const q=(a,p)=>d3.quantile(a.slice().sort(d3.ascending),p);
+const sel=d3.select("#sel");S.forEach(d=>sel.append("option").attr("value",d.id).text(`${d.id} · ${d.s} (${d.r})`));
+const W=680,M={t:8,r:16,b:28,l:56},row=13;
+const kpi=(l,v,dl)=>`<div style="background:var(--surface-1);border-radius:var(--radius);padding:.75rem 1rem"><div style="font-size:13px;color:var(--text-secondary)">${l}</div><div style="font-size:22px;font-weight:500">${v}</div><div style="font-size:12px;color:var(--text-muted)">${dl||""}</div></div>`;
+const sgn=v=>(v>0?"+":v<0?"−":"±")+Math.abs(v).toFixed(1);
+const peers=(me,only,yr)=>S.filter(d=>(!only||d.r===me.r)&&d.y[yr]);
+function draw(){const me=S.find(d=>d.id===sel.property("value")),only=d3.select("#reg").property("checked"),trail=d3.select("#trail").property("checked"),yr=+d3.select("#yr").property("value");
+  d3.select("#yrl").text(`Wave ${yr}`);const data=peers(me,only,yr).sort((a,b)=>a.y[yr].m-b.y[yr].m);const bm=d3.median(data.map(d=>d.y[yr].m)),cur=me.y[yr],prev=me.y[yr-1];
+  const pb=yr>2022?d3.median(peers(me,only,yr-1).map(d=>d.y[yr-1].m)):null;
+  if(cur){const rank=data.filter(d=>d.y[yr].m<cur.m).length+data.filter(d=>d.y[yr].m===cur.m).length/2;
+    d3.select("#kpi").html(kpi("Median age, your school",cur.m.toFixed(1),prev?`${sgn(cur.m-prev.m)} vs. ${yr-1}`:"first wave")+kpi("Benchmark",bm.toFixed(1),pb!=null?`${sgn(bm-pb)} vs. ${yr-1}`:"")+kpi("Middle 50 %",`${Math.round(cur.q1)}–${Math.round(cur.q3)}`,`n = ${cur.n}`)+kpi("Percentile rank",Math.round(100*rank/data.length),`${data.length} schools`));}
+  else d3.select("#kpi").html(kpi("Your school","not yet in study",`joined in ${me.join}`)+kpi("Benchmark",bm.toFixed(1),""));
+  const H=M.t+M.b+data.length*row,box=d3.select("#dp");box.selectAll("*").remove();const svg=box.append("svg").attr("viewBox",`0 0 ${W} ${H}`).attr("width","100%");
+  const x=d3.scaleLinear([24,56],[M.l,W-M.r]),y=d3.scaleBand(data.map(d=>d.id),[M.t,H-M.b]).padding(0.2);
+  x.ticks(8).forEach(v=>{svg.append("line").attr("x1",x(v)).attr("x2",x(v)).attr("y1",M.t).attr("y2",H-M.b).attr("stroke","var(--border)");svg.append("text").attr("x",x(v)).attr("y",H-10).attr("text-anchor","middle").style("font-size","11px").style("fill","var(--text-muted)").text(v)});
+  svg.append("line").attr("x1",x(bm)).attr("x2",x(bm)).attr("y1",M.t).attr("y2",H-M.b).attr("stroke","#888780").attr("stroke-width",1.5).attr("stroke-dasharray","4 3");
+  const g=svg.selectAll("g.r").data(data).join("g").attr("transform",d=>`translate(0,${y(d.id)+y.bandwidth()/2})`);
+  g.append("line").attr("x1",d=>x(d.y[yr].q1)).attr("x2",d=>x(d.y[yr].q3)).attr("stroke",d=>d===me?"#2a78d6":"#d3d1c7").attr("stroke-width",d=>d===me?4:2).attr("stroke-linecap","round");
+  if(trail&&cur){const pts=YRS.filter(t=>t<yr&&me.y[t]).map(t=>({t,m:me.y[t].m}));const gm=g.filter(d=>d===me);if(pts.length){gm.append("path").attr("d",d3.line().x(p=>x(p.m)).y(0)([...pts,{m:cur.m}])).attr("stroke","#85b7eb").attr("stroke-width",1.5).attr("fill","none");gm.selectAll("circle.p").data(pts).join("circle").attr("cx",p=>x(p.m)).attr("r",3).attr("fill","#85b7eb");}}
+  g.append("circle").attr("cx",d=>x(d.y[yr].m)).attr("r",d=>d===me?5.5:3.5).attr("fill",d=>d===me?"#2a78d6":"#b4b2a9").attr("stroke","#fff").attr("stroke-width",1.5);
+  g.filter(d=>d===me).append("text").attr("x",M.l-6).attr("y",4).attr("text-anchor","end").style("font-size","11px").style("font-weight",500).text("Your school");
+  trend(me,only,yr);}
+function trend(me,only,yr){const box=d3.select("#tr");box.selectAll("*").remove();const Wt=680,Ht=190,m={t:12,r:70,b:26,l:40};const svg=box.append("svg").attr("viewBox",`0 0 ${Wt} ${Ht}`).attr("width","100%");
+  const band=YRS.map(t=>{const v=peers(me,only,t).map(d=>d.y[t].m);return{t,lo:q(v,.25),md:d3.median(v),hi:q(v,.75)}});const mine=YRS.filter(t=>me.y[t]).map(t=>({t,m:me.y[t].m}));
+  const all=[...band.flatMap(b=>[b.lo,b.hi]),...mine.map(p=>p.m)];const x=d3.scalePoint(YRS,[m.l,Wt-m.r]).padding(0.3),y=d3.scaleLinear([Math.floor(d3.min(all))-1,Math.ceil(d3.max(all))+1],[Ht-m.b,m.t]);
+  y.ticks(4).forEach(v=>{svg.append("line").attr("x1",m.l).attr("x2",Wt-m.r).attr("y1",y(v)).attr("y2",y(v)).attr("stroke","var(--border)");svg.append("text").attr("x",m.l-6).attr("y",y(v)+4).attr("text-anchor","end").style("font-size","11px").style("fill","var(--text-muted)").text(v)});
+  YRS.forEach(t=>svg.append("text").attr("x",x(t)).attr("y",Ht-8).attr("text-anchor","middle").style("font-size","11px").style("font-weight",t===yr?500:400).text(t));
+  svg.append("line").attr("x1",x(yr)).attr("x2",x(yr)).attr("y1",m.t).attr("y2",Ht-m.b).attr("stroke","var(--border-strong)");
+  svg.append("path").attr("d",d3.area().x(b=>x(b.t)).y0(b=>y(b.lo)).y1(b=>y(b.hi))(band)).attr("fill","#888780").attr("opacity",0.14);
+  svg.append("path").attr("d",d3.line().x(b=>x(b.t)).y(b=>y(b.md))(band)).attr("stroke","#888780").attr("stroke-width",1.5).attr("stroke-dasharray","4 3").attr("fill","none");
+  svg.append("path").attr("d",d3.line().x(p=>x(p.t)).y(p=>y(p.m))(mine)).attr("stroke","#2a78d6").attr("stroke-width",2).attr("fill","none");
+  svg.selectAll("circle.me").data(mine).join("circle").attr("cx",p=>x(p.t)).attr("cy",p=>y(p.m)).attr("r",4.5).attr("fill","#2a78d6").attr("stroke","#fff").attr("stroke-width",2);}
+let timer=null;d3.select("#play").on("click",function(){if(timer){clearInterval(timer);timer=null;this.textContent="Play";return}this.textContent="Pause";let y=2022;d3.select("#yr").property("value",y);draw();
+  timer=setInterval(()=>{y++;if(y>2026){clearInterval(timer);timer=null;d3.select("#play").text("Play");return}d3.select("#yr").property("value",y);draw()},1100)});
+sel.on("change",draw);d3.selectAll("#reg,#trail").on("change",draw);d3.select("#yr").on("input",draw);draw();
+</script></body></html>

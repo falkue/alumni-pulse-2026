@@ -1,0 +1,19 @@
+{
+  "school_id": "S042",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Employment of 90.0 % is close to the benchmarks, with full-time work matching them almost exactly.",
+  "how_to_read": "Flows run from all respondents (left) to employed or not employed (middle) and then to detailed situation (right); width is the share of respondents. The hatched \"Hidden\" flow marks details held back because fewer than 3 people fall into them.",
+  "key_findings": [
+    "Employed graduates account for 90.0 %, of whom 75.0 % work full-time and 10.0 % are self-employed.",
+    "The 10.0 % not employed contain no students, retirees or other situations; seeking work and not seeking work are hidden."
+  ],
+  "benchmark": "Employment is 1.3 pp below Asia (91.3 %) and 2.6 pp below all schools (92.6 %). Full-time work is within 0.4 pp of Asia (74.6 %), while self-employment is 2.0 pp above all schools (8.0 %).",
+  "caveats": "At n = 40 one person still moves the percentages by a couple of points; part-time, other employment, seeking work and not seeking work are hidden (fewer than 3 people).",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:42:00Z"
+}

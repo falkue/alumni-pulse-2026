@@ -1,0 +1,52 @@
+{
+  "school_id": "S046",
+  "school_name": "Hanbit University Business School",
+  "is_demo_all_schools": false,
+  "published": true,
+  "metric": "career.employment.flow",
+  "unit": "percent of all respondents; null = hidden (fewer than 3 people)",
+  "own": {
+    "n": 29,
+    "employed_total": null,
+    "full_time": 72.4,
+    "part_time": null,
+    "self_employed": 13.8,
+    "other_employment": null,
+    "not_employed_total": null,
+    "seeking_work": null,
+    "not_seeking_work": 0,
+    "student": 0,
+    "retired": 0,
+    "other_situation": 0
+  },
+  "benchmarks": {
+    "all": {
+      "n": 1499,
+      "employed_total": 92.6,
+      "full_time": 74.9,
+      "part_time": 7.9,
+      "self_employed": 8,
+      "other_employment": 1.8,
+      "not_employed_total": 7.4,
+      "seeking_work": 4.3,
+      "not_seeking_work": 1.5,
+      "student": 0,
+      "retired": 0.6,
+      "other_situation": 1
+    },
+    "region=Asia": {
+      "n": 426,
+      "employed_total": 91.3,
+      "full_time": 74.6,
+      "part_time": 4.9,
+      "self_employed": 9.2,
+      "other_employment": 2.6,
+      "not_employed_total": 8.7,
+      "seeking_work": 6.6,
+      "not_seeking_work": 1.2,
+      "student": 0,
+      "retired": null,
+      "other_situation": null
+    }
+  }
+}

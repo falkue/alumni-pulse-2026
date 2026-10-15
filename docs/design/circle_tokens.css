@@ -1,0 +1,63 @@
+/* =============================================================================
+   Circle / PostPlan design tokens — source: the user's Circle and PostPlan
+   artifacts ("Circle Start", "Postplan Wochenansicht", Oct 2026).
+   Drop-in for the Alumni Pulse portal: map the portal's existing tokens onto
+   these variables. Light + dark (system preference, overridable via
+   <html data-theme="light|dark">).
+   ============================================================================= */
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap");
+
+:root{
+  color-scheme: light;
+  /* surfaces: warm paper, window, card, pane */
+  --page:#F3EFE7; --page-2:#E9E4D9;
+  --win:#FBF9F5; --card:#FFFFFF; --pane:#F6F3ED;
+  --side:rgba(238,233,224,.66);              /* translucent sidebar, use with backdrop-filter */
+  --sel:rgba(45,38,28,.075); --hover:rgba(45,38,28,.04);
+  /* ink (text) in four steps */
+  --ink:#22211F; --ink-2:#5D5A54; --ink-3:#8C887F; --ink-4:#B7B2A8;
+  /* hairlines */
+  --line:rgba(45,38,28,.10); --line-2:rgba(45,38,28,.17);
+  /* semantic palette */
+  --blue:#3E78D8; --coral:#E05A6D; --orange:#E5893A; --yellow:#D69A1E;
+  --green:#3A9A5D; --violet:#8466D3; --grey:#8A877F;
+  --accent:var(--blue); --solid:#3A73D3; --onsolid:#FFFFFF;
+  --tint:13%;                                /* strength of tinted pills/badges */
+  /* soft background washes (page background only) */
+  --w1:#F2C7A3; --w2:#C6D3EC; --w3:#E8B6C1;
+  /* elevation */
+  --shadow-card:0 1px 2px rgba(45,38,28,.06), 0 6px 20px -10px rgba(45,38,28,.18);
+  --shadow-win:0 0 0 .5px var(--line-2), 0 30px 70px -26px rgba(70,45,20,.38);
+  /* type */
+  --serif:"Instrument Serif","Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  /* radii */
+  --r-btn:7px; --r-input:7px; --r-card:11px; --r-panel:12px; --r-pill:999px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --page:#141312; --page-2:#1C1B19; --win:#1E1D1B; --card:#272624; --pane:#1A1918;
+    --side:rgba(44,41,37,.62); --sel:rgba(255,248,235,.09); --hover:rgba(255,248,235,.05);
+    --ink:#EEEBE4; --ink-2:#B4AFA6; --ink-3:#88847C; --ink-4:#5D5953;
+    --line:rgba(255,248,235,.085); --line-2:rgba(255,248,235,.14);
+    --blue:#6C9DEC; --coral:#EE7587; --orange:#EFA062; --yellow:#E5B54E; --green:#5DB67E; --violet:#A38BE7; --grey:#9D998F;
+    --solid:#3F7BDB; --tint:20%;
+    --w1:#3a2a1f; --w2:#1f2838; --w3:#33222a;
+    --shadow-card:0 1px 2px rgba(0,0,0,.3), 0 6px 20px -10px rgba(0,0,0,.5);
+    --shadow-win:0 0 0 .5px var(--line-2), 0 30px 70px -26px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#141312; --page-2:#1C1B19; --win:#1E1D1B; --card:#272624; --pane:#1A1918;
+  --side:rgba(44,41,37,.62); --sel:rgba(255,248,235,.09); --hover:rgba(255,248,235,.05);
+  --ink:#EEEBE4; --ink-2:#B4AFA6; --ink-3:#88847C; --ink-4:#5D5953;
+  --line:rgba(255,248,235,.085); --line-2:rgba(255,248,235,.14);
+  --blue:#6C9DEC; --coral:#EE7587; --orange:#EFA062; --yellow:#E5B54E; --green:#5DB67E; --violet:#A38BE7; --grey:#9D998F;
+  --solid:#3F7BDB; --tint:20%;
+  --w1:#3a2a1f; --w2:#1f2838; --w3:#33222a;
+  --shadow-card:0 1px 2px rgba(0,0,0,.3), 0 6px 20px -10px rgba(0,0,0,.5);
+  --shadow-win:0 0 0 .5px var(--line-2), 0 30px 70px -26px rgba(0,0,0,.7);
+}

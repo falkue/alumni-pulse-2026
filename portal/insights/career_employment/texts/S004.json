@@ -1,0 +1,20 @@
+{
+  "school_id": "S004",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Employment is 88.5 %, below the European and overall levels, with 11.5 % not employed.",
+  "how_to_read": "Left: all respondents; middle: employed versus not employed; right: the detailed situation. Band widths show each group's share of respondents. The hatched 'Hidden' flow marks groups with fewer than 3 people, whose values are not shown.",
+  "key_findings": [
+    "Employment totals 88.5 %, with full-time work at 73.1 %.",
+    "Not employed totals 11.5 %; the seeking-work and other-situation groups are hidden, while no one is retired, studying or not seeking work.",
+    "Part-time and self-employment are hidden (fewer than 3 people)."
+  ],
+  "benchmark": "Employment is 4.7 pp below the European region (93.2 %) and 4.1 pp below all schools (92.6 %). Full-time work is close to the benchmarks, 1.1 pp below the region (74.2 %) and 1.8 pp below all schools (74.9 %).",
+  "caveats": "With n = 26, each person moves percentages by several points, and four cells are hidden.",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:38:15Z"
+}

@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(~/AlumniPulse_SecureData/**)",
+      "Edit(~/AlumniPulse_SecureData/**)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=\"$CLAUDE_PROJECT_DIR/.claude/hooks/alumni_pulse_guard.sh\"; [ -x \"$f\" ] || f=\"./.claude/hooks/alumni_pulse_guard.sh\"; [ -x \"$f\" ] || f=\"$HOME/.claude/hooks/alumni_pulse_guard.sh\"; \"$f\"",
+            "timeout": 10,
+            "onFailure": "block"
+          }
+        ]
+      }
+    ]
+  }
+}

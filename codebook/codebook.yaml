@@ -1,0 +1,346 @@
+# =============================================================================
+# Global Alumni Pulse 2026 — Codebook (single source of truth)
+# =============================================================================
+#
+# What this file is
+# -----------------
+# Every column of the Qualtrics export ("numeric values" export, with country
+# and free-text fields exported as text) is described here once:
+#   name        column name in the export (= Qualtrics export tag)
+#   block       Qualtrics block the question lives in
+#   label       short human-readable label used in reports and the portal
+#   type        single | multi | numeric | text | country | meta
+#               (matrix questions are listed item by item as type "single")
+#   values      code -> label (for single and for the options of multi)
+#   display_if  WHEN the question is shown, written as a pandas query
+#               expression over other columns. Empty = shown to everybody
+#               who reached the block. Used by the validator to check that
+#               skip logic is respected (no answer where the question was
+#               hidden).
+#   option_display_if  same, per answer option of a multi-select question.
+#   exclusive   options of a multi-select that cannot be combined with others.
+#   max_select  maximum number of options ("select up to 3").
+#
+# How multi-select questions are exported
+# ---------------------------------------
+# One column per option: <name>_<code>, value 1 if ticked, empty otherwise.
+# "Other (please specify)" text goes into <name>_<code>_TEXT.
+#
+# Labels marked "PLACEHOLDER" are not printed in the questionnaire export
+# (collapsed dropdowns) and must be checked against the live Qualtrics survey
+# before real data are processed.
+# =============================================================================
+
+survey:
+  id: alumni_pulse_2026
+  title: Global Alumni Pulse 2026
+  lead: ZHAW School of Management and Law
+  partners: [Financial Times, AACSB International, Beta Gamma Sigma]
+  reference_year: 2026
+
+# -----------------------------------------------------------------------------
+# Value sets that are reused by several questions
+# -----------------------------------------------------------------------------
+value_sets:
+  importance5: {1: Not at all important, 2: Slightly important, 3: Moderately important, 4: Important, 5: Very important}
+  prepared5: {1: Not at all prepared, 2: Slightly prepared, 3: Moderately prepared, 4: Well prepared, 5: Extremely well prepared}
+  quality5: {1: Very poor, 2: Poor, 3: Fair, 4: Good, 5: Excellent}
+  satisfied5: {1: Very dissatisfied, 2: Dissatisfied, 3: Neither satisfied nor dissatisfied, 4: Satisfied, 5: Very satisfied}
+  outlook5: {1: Very negative, 2: Somewhat negative, 3: Neither positive nor negative, 4: Somewhat positive, 5: Very positive}
+  agree5: {1: Strongly disagree, 2: Somewhat disagree, 3: Neither agree nor disagree, 4: Somewhat agree, 5: Strongly agree}
+  degree_status: {1: Completed, 2: Currently enrolled, 3: Considering for the future, 4: Not applicable}
+  yes_no: {1: "Yes", 2: "No"}
+  bipolar5: {1: "1", 2: "2", 3: "3", 4: "4", 5: "5"}
+
+# -----------------------------------------------------------------------------
+# Skill list (matrix rows of pgm_skill_imp and pgm_skill_prep)
+# key = suffix used in column names
+# -----------------------------------------------------------------------------
+skills:
+  leadership: Leadership
+  strategy: Strategy
+  finance: Finance
+  innovation: Innovation
+  change_mgmt: Change management
+  negotiation: Negotiation
+  digital_transf: Digital transformation
+  marketing: Marketing
+  operations: Operations
+  esg: ESG / Sustainability
+  csr: Corporate Social Responsibility
+  ai: Artificial Intelligence (incl. Generative AI)
+  data_analytics: Data Analytics / Data Science
+  entrepreneurship: Entrepreneurship
+  project_mgmt: Project Management
+  people_mgmt: People Management
+  communication: Communication & persuasion
+
+variables:
+
+  # ---------------------------------------------------------------- metadata
+  - {name: ResponseId, block: meta, type: meta, label: Qualtrics response id}
+  - {name: StartDate, block: meta, type: meta, label: Start timestamp (UTC)}
+  - {name: EndDate, block: meta, type: meta, label: End timestamp (UTC)}
+  - {name: Status, block: meta, type: meta, label: "Response type (0 = IP address)"}
+  - {name: Progress, block: meta, type: meta, label: Progress in percent}
+  - {name: Duration (in seconds), block: meta, type: meta, label: Duration in seconds}
+  - {name: Finished, block: meta, type: meta, label: "Finished (1) / not finished (0)"}
+  - {name: RecordedDate, block: meta, type: meta, label: Recorded timestamp (UTC)}
+  - {name: UserLanguage, block: meta, type: meta, label: Survey language}
+  - {name: Q_RecaptchaScore, block: meta, type: meta, label: "reCAPTCHA score (0-1, <0.5 suspicious)"}
+  - {name: Q_RelevantIDDuplicate, block: meta, type: meta, label: "Duplicate flag (true/empty)"}
+  - {name: Distribution, block: meta, type: meta, label: "Distribution channel (school / ft / aacsb / bgs)"}
+
+  # ------------------------------------------------------------------- intro
+  - name: consent
+    block: Intro
+    type: single
+    label: Consent given
+    values: {1: "I agree", 2: "I do not agree"}
+
+  # ------------------------------------------------------------ demographics
+  - {name: dem_birth_year, block: Demographics, type: numeric, label: Year of birth, range: [1936, 2007], display_if: "consent == 1"}
+  - name: dem_gender
+    block: Demographics
+    type: single
+    label: Gender
+    values: {1: "Female", 2: "Male", 3: "Non-binary / third gender", 99: "Prefer not to say"}
+    display_if: "consent == 1"
+  - {name: dem_country_res, block: Demographics, type: country, label: Country of residence, display_if: "consent == 1"}
+
+  # --------------------------------------------------------------- education
+  - {name: edu_deg_bachelor, block: Education, type: single, label: "Degree: Bachelor", value_set: degree_status, display_if: "consent == 1"}
+  - {name: edu_deg_master, block: Education, type: single, label: "Degree: Master", value_set: degree_status, display_if: "consent == 1"}
+  - {name: edu_deg_mba, block: Education, type: single, label: "Degree: MBA", value_set: degree_status, display_if: "consent == 1"}
+  - {name: edu_deg_emba, block: Education, type: single, label: "Degree: EMBA", value_set: degree_status, display_if: "consent == 1"}
+  - {name: edu_deg_phd, block: Education, type: single, label: "Degree: PhD / Doctorate", value_set: degree_status, display_if: "consent == 1"}
+  - {name: edu_deg_other, block: Education, type: single, label: "Degree: Other", value_set: degree_status, display_if: "consent == 1"}
+  - {name: edu_deg_other_TEXT, block: Education, type: text, label: "Degree: Other (text)", display_if: "edu_deg_other in [1, 2]"}
+  - name: edu_other_level
+    block: Education
+    type: single
+    label: Level of the "other" degree
+    values: {1: "Bachelor's level", 2: "Master's level", 3: "MBA level", 4: "EMBA level", 5: "PhD / Doctorate level", 6: "None of the above", 7: "Not sure"}
+    display_if: "edu_deg_other in [1, 2]"
+
+  # -------------------------------------------------------------- university
+  # Respondents who completed no degree are screened out before this block.
+  - {name: edu_school_1, block: University, type: country, label: Country of the business school, display_if: "screened_in == 1"}
+  - {name: edu_school_5, block: University, type: text, label: Business school (dropdown text), display_if: "screened_in == 1"}
+  - {name: edu_grad_year, block: University2, type: numeric, label: Graduation year of highest degree, range: [1970, 2026], display_if: "screened_in == 1"}
+
+  # -------------------------------------------------------------- employment
+  - {name: job_employed, block: Employment, type: single, label: Currently employed, value_set: yes_no, display_if: "screened_in == 1"}
+  - name: job_type
+    block: Employment
+    type: single
+    label: Type of employment
+    values: {1: "Employed full-time", 2: "Employed part-time", 3: "Self-employed / Entrepreneur", 4: "Other"}
+    display_if: "job_employed == 1"
+  - {name: job_type_4_TEXT, block: Employment, type: text, label: Type of employment (other text), display_if: "job_type == 4"}
+  - name: job_status
+    block: Employment
+    type: single
+    label: Current situation (not employed)
+    values: {1: "Full-time student", 2: "Retired", 3: "Not employed, seeking work", 4: "Not employed, not seeking work", 5: "Other"}
+    display_if: "job_employed == 2"
+    # Option 1 "Full-time student" is only offered to respondents currently enrolled
+    # in a Bachelor programme (Qualtrics: edu_deg#1 = 2).
+  - {name: job_status_5_TEXT, block: Employment, type: text, label: Current situation (other text), display_if: "job_status == 5"}
+  - {name: job_workload_pct, block: Employment, type: numeric, label: Workload in % of full time, range: [0, 100], display_if: "job_type in [2, 3]"}
+  - {name: job_retire_year, block: Employment, type: numeric, label: Year of retirement, range: [1970, 2026], display_if: "job_status == 2"}
+
+  # ----------------------------------------------------- industry & employer
+  - name: job_org_type
+    block: Industry & Employer
+    type: single
+    label: Type of organisation
+    values: {1: "Startup", 2: "SME", 3: "Large company / corporation", 4: "University / higher education / research", 5: "Public sector / government", 6: "Non-profit / NGO", 7: "Other"}
+    display_if: "job_employed == 1 or job_status == 2"
+  - name: job_industry
+    block: Industry & Employer
+    type: single
+    label: Industry of employer
+    # PLACEHOLDER labels 2-18 (dropdown collapsed in the export: "Accommodation & food services (1) ... Other (19)")
+    values: {1: "Accommodation & food services", 2: "Agriculture & food production", 3: "Arts, entertainment & recreation", 4: "Automotive", 5: "Construction & real estate", 6: "Consulting & professional services", 7: "Education & research", 8: "Energy & utilities", 9: "Financial services & insurance", 10: "Government & public administration", 11: "Healthcare & life sciences", 12: "Information technology & telecommunications", 13: "Logistics & transportation", 14: "Manufacturing & industrial goods", 15: "Media & entertainment", 16: "Non-profit & social services", 17: "Retail & consumer goods", 18: "Travel & tourism", 19: "Other"}
+    display_if: "job_employed == 1 or job_status == 2"
+  - name: job_position
+    block: Industry & Employer
+    type: single
+    label: Position
+    values: {1: "Top management / C-level / Board", 2: "Senior management", 3: "Middle management / team lead", 4: "Specialist", 5: "Early career specialist", 6: "Entry level / junior / trainee", 7: "Support / administrative", 8: "Self-employed (founder, freelancer)", 9: "Dean / Rector / Institute director", 10: "Full professor", 11: "Associate professor", 12: "Assistant professor / senior lecturer", 13: "Lecturer", 14: "Academic early career", 15: "University administrator", 16: "Program director", 17: "Other"}
+    display_if: "job_employed == 1 or job_status == 2"
+  - name: job_function
+    block: Function
+    type: single
+    label: Function
+    # PLACEHOLDER labels 2-14 ("General Management / Executive (1) ... other (15)")
+    values: {1: "General management / executive", 2: "Finance & accounting", 3: "Marketing & sales", 4: "Strategy & business development", 5: "Consulting", 6: "Operations & supply chain", 7: "HR & people", 8: "IT & digital", 9: "Data & analytics", 10: "Product & innovation", 11: "Legal, risk & compliance", 12: "Communications & PR", 13: "Project & programme management", 14: "Entrepreneurship / founder", 15: "Other"}
+    display_if: "job_position in [1, 2, 3, 4, 5, 6, 7, 8]"
+  - {name: job_function_oth_txt, block: Function Other, type: text, label: Function (other text), display_if: "job_function == 15"}
+  - {name: job_country, block: Working Country, type: country, label: Country of work, display_if: "job_employed == 1 or job_status == 2"}
+
+  # ------------------------------------------------------------------ salary
+  - {name: sal_disclose_1, block: Salary, type: numeric, label: Annual gross income in local currency, display_if: "job_employed == 1"}
+  - {name: sal_disclose_2, block: Salary, type: single, label: Prefers not to disclose income, values: {1: Prefer not to disclose}, display_if: "job_employed == 1"}
+
+  # -------------------------------------------- evaluation of the programme
+  # pgm_skill_imp_<skill> (importance5) for all 17 skills: generated from `skills`
+  # pgm_skill_prep_<skill> (prepared5), shown only if pgm_skill_imp_<skill> >= 3
+  - {name: pgm_skill_imp_*, block: Evaluation, type: single, label: "Importance: {skill}", value_set: importance5, expand: skills, display_if: "screened_in == 1"}
+  - {name: pgm_skill_prep_*, block: Evaluation, type: single, label: "Preparation: {skill}", value_set: prepared5, expand: skills, display_if: "pgm_skill_imp_{key} >= 3"}
+  - {name: pgm_rate_relevance, block: Evaluation, type: single, label: Relevance for career development, value_set: quality5, display_if: "screened_in == 1"}
+  - {name: pgm_rate_leadership_prep, block: Evaluation, type: single, label: Preparation for leadership roles, value_set: quality5, display_if: "screened_in == 1"}
+  - {name: pgm_rate_theory_practice, block: Evaluation, type: single, label: Balance theory / practice, value_set: quality5, display_if: "screened_in == 1"}
+  - {name: pgm_rate_reputation, block: Evaluation, type: single, label: Reputation of the school, value_set: quality5, display_if: "screened_in == 1"}
+  - {name: pgm_rate_interaction, block: Evaluation, type: single, label: Faculty-student interaction, value_set: quality5, display_if: "screened_in == 1"}
+  - {name: pgm_rate_network, block: Evaluation, type: single, label: Networking opportunities, value_set: quality5, display_if: "screened_in == 1"}
+  - {name: pgm_satisfaction, block: Evaluation, type: single, label: Overall satisfaction with business education, value_set: satisfied5, display_if: "screened_in == 1"}
+  - {name: pgm_most_valuable_tx, block: Evaluation, type: text, label: Most valuable thing about the programme, display_if: "screened_in == 1"}
+  - {name: pgm_change_one_txt, block: Evaluation, type: text, label: One thing to change, display_if: "screened_in == 1"}
+  - name: pgm_nps
+    block: Evaluation
+    type: single
+    label: Likelihood to recommend (0-10)
+    values: {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9", 10: "10"}
+    display_if: "screened_in == 1"
+
+  # ---------------------------------------------------- continuing education
+  - {name: ce_any, block: contin_ed_overview, type: single, label: Continuing education since degree, value_set: yes_no, display_if: "screened_in == 1"}
+  - name: ce_type
+    block: contin_ed_overview
+    type: multi
+    label: Type of continuing education
+    values: {1: "Short course / MOOC", 2: "Micro-credential / certificate", 3: "CAS", 4: "DAS", 5: "Professional certification (CFA, PMP ...)", 6: "Executive education (non-degree)", 7: "Other"}
+    display_if: "ce_any == 1"
+
+  # ------------------------------------------------- wellbeing and outlook
+  - {name: car_satisfaction, block: Sec IV, type: single, label: Satisfaction with career development, value_set: satisfied5, display_if: "screened_in == 1"}
+  - {name: car_satisfaction_why, block: Sec IV, type: text, label: Reason for career satisfaction, display_if: "screened_in == 1"}
+  - name: car_hopeful
+    block: Sec IV
+    type: single
+    label: Hopefulness about future career
+    values: {1: "Not hopeful at all", 2: "Slightly hopeful", 3: "Moderately hopeful", 4: "Very hopeful", 5: "Extremely hopeful"}
+    display_if: "screened_in == 1"
+  - {name: wb_1, block: Sec IV, type: single, label: "Wellbeing: private / personal life (1 dissatisfied - 5 satisfied)", value_set: bipolar5, display_if: "screened_in == 1", optional: true}
+  - {name: wb_2, block: Sec IV, type: single, label: "Wellbeing: physical health (1 poor - 5 excellent)", value_set: bipolar5, display_if: "screened_in == 1", optional: true}
+  - {name: wb_3, block: Sec IV, type: single, label: "Wellbeing: financial situation (1 dissatisfied - 5 satisfied)", value_set: bipolar5, display_if: "screened_in == 1", optional: true}
+  - name: wb_stress
+    block: Sec IV
+    type: single
+    label: Stress level (past 4 weeks)
+    values: {1: "Not at all stressed", 2: "Slightly stressed", 3: "Moderately stressed", 4: "Very stressed", 5: "Extremely stressed"}
+    display_if: "screened_in == 1"
+  - {name: wb_work_life, block: Sec IV, type: single, label: Satisfaction with work-life balance, value_set: satisfied5, display_if: "job_employed == 1 or job_status == 1"}
+  - {name: out_global, block: Sec IV, type: single, label: Global socio-economic outlook (12 months), value_set: outlook5, display_if: "screened_in == 1"}
+  - {name: out_country, block: Sec IV, type: single, label: Outlook for country of residence/work (12 months), value_set: outlook5, display_if: "screened_in == 1"}
+  - name: out_soc_chall
+    block: Sec IV
+    type: multi
+    label: Biggest societal challenges in country (up to 3)
+    values: {1: "Cost of living & inflation", 16: "Economic downturn & unemployment", 2: "Housing affordability", 3: "Healthcare access & quality", 5: "Education quality & skills gaps", 6: "Crime & public safety", 7: "Immigration & integration", 8: "Political polarisation", 9: "Trust in institutions & corruption", 10: "Climate change & environment", 11: "Energy security & prices", 12: "Digitalisation / AI / cybersecurity", 13: "Ageing population & care", 14: "Infrastructure & public transport", 17: "War & geopolitical conflict", 15: "Other", 19: "I don't know"}
+    max_select: 3
+    exclusive: [19]
+    display_if: "screened_in == 1"
+  - name: out_econ_chall
+    block: Sec IV
+    type: multi
+    label: Biggest challenges for the world economy (up to 3)
+    values: {1: "Inflation & interest-rate volatility", 16: "Global recession / slowdown", 12: "Trade conflicts & tariffs", 7: "Regulatory fragmentation", 2: "Geopolitical tensions & armed conflict", 17: "Supply chain disruptions", 3: "Energy & commodity prices", 4: "Sovereign & corporate debt", 13: "Financial & currency instability", 5: "Productivity & innovation gaps", 6: "Labour & skills shortages", 9: "Disruption from AI & automation", 15: "Cyberattacks on critical infrastructure", 10: "Climate change: physical risks", 18: "Climate change: transition risks", 19: "Rising inequality", 11: "Other", 20: "I don't know"}
+    max_select: 3
+    exclusive: [20]
+    display_if: "screened_in == 1"
+
+  # -------------------------------------------------------------- AI focus
+  - name: ai_use_freq
+    block: AI Intro
+    type: single
+    label: Frequency of AI use at work
+    values: {1: "Never", 2: "Occasionally (< weekly)", 3: "About once a week", 4: "Several times a week", 5: "Daily"}
+    display_if: "screened_in == 1"
+  - name: ai_barrier
+    block: AI Intro
+    type: multi
+    label: Reasons for not using AI more (up to 3)
+    values: {12: "Poor integration with systems/data", 1: "Organisation does not allow it", 13: "Cost of licences / tokens", 10: "Reliability – needs too much checking", 11: "Unclear accountability", 4: "Data protection / confidentiality", 3: "Don't trust the results", 5: "Want to keep control of my work", 6: "Lack of know-how or time", 8: "No longer in working life", 2: "No reason to try it yet", 7: "Not relevant to my work", 17: "Against my personal values", 9: "Other", 15: "Nothing holds me back"}
+    max_select: 3
+    exclusive: [15]
+    display_if: "ai_use_freq != 5"
+    option_display_if:
+      1: "job_employed == 1"
+      8: "job_employed == 2"
+      2: "ai_use_freq == 1"
+  - name: ai_task
+    block: AI
+    type: multi
+    label: Main tasks AI is used for
+    values: {1: "Writing & editing", 4: "Summarising documents / meetings", 5: "Research & synthesis", 6: "Data analysis & spreadsheets", 7: "Coding / technical work", 8: "Idea generation", 9: "Decision support & scenarios", 10: "Customer / client interactions", 11: "Image, slide or media creation", 12: "Other"}
+    display_if: "ai_use_freq != 1"
+  - name: ai_agentic_use
+    block: AI
+    type: single
+    label: Use of agentic AI
+    values: {1: "Never heard of it", 2: "Know of it but don't use it", 3: "Experimenting occasionally", 4: "Use regularly for defined tasks", 5: "Runs core parts of my workflow"}
+    display_if: "ai_use_freq != 1"
+  - name: ai_agentic_task
+    block: AI
+    type: multi
+    label: Tasks handed over to agentic AI
+    values: {1: "Multi-source research", 2: "Drafting documents end to end", 3: "Data pulls & recurring reporting", 4: "Recurring operational processes", 5: "Scheduling, inbox & admin", 6: "Software development & testing", 7: "Customer / client communication", 8: "Monitoring KPIs & flagging issues", 9: "Preparing decisions", 10: "Building further automations / agents", 11: "Other"}
+    display_if: "ai_agentic_use in [3, 4, 5]"
+  - name: ai_skill_need
+    block: AI
+    type: multi
+    label: Most valuable AI capabilities in business education (up to 3)
+    values: {1: "Prompting & everyday use", 4: "Leading teams & change with AI", 5: "Designing & overseeing agentic workflows", 6: "AI strategy & business models", 7: "Data literacy & interpreting AI output", 8: "AI ethics, governance & regulation", 9: "Automating own tasks / simple agents", 10: "Other"}
+    max_select: 3
+    display_if: "ai_use_freq != 1"
+  - name: ai_headcount_outlook
+    block: AI
+    type: single
+    label: Expected effect of AI on headcount in roles like mine (3 years)
+    values: {1: "Strongly reduce", 2: "Somewhat reduce", 3: "No notable change", 4: "Somewhat increase", 5: "Strongly increase", 99: "Don't know"}
+    display_if: "ai_use_freq != 1"
+  - {name: ai_org_perf_assessed, block: AI_Organisation, type: single, label: AI use is part of performance assessment, value_set: agree5, display_if: "job_employed == 1"}
+  - {name: ai_org_guidelines, block: AI_Organisation, type: single, label: Clear guidelines for AI use, value_set: agree5, display_if: "job_employed == 1"}
+  - {name: ai_org_roi_expected, block: AI_Organisation, type: single, label: Organisation expects AI ROI, value_set: agree5, display_if: "job_employed == 1"}
+  - {name: ai_org_junior_tasks, block: AI_Organisation, type: single, label: Junior tasks increasingly done by AI, value_set: agree5, display_if: "job_employed == 1"}
+  - {name: ai_org_trust_outputs, block: AI_Organisation, type: single, label: Trust AI outputs with little checking, value_set: agree5, display_if: "job_employed == 1"}
+  - {name: ai_org_ethics_concern, block: AI_Organisation, type: single, label: Concerned about ethics / data protection, value_set: agree5, display_if: "job_employed == 1"}
+  - name: ai_access
+    block: AI_Organisation
+    type: multi
+    label: How AI tools are accessed
+    values: {1: "Provided by organisation", 3: "Free versions", 4: "Personal paid subscription", 6: "Through university (student/alumni licence)", 7: "Other"}
+    display_if: "job_employed == 1"
+    option_display_if:
+      6: "edu_deg_bachelor == 2 or edu_deg_master == 2 or edu_deg_mba == 2 or edu_deg_emba == 2 or edu_deg_phd == 2 or edu_deg_other == 2"
+  - name: ai_org_meas
+    block: AI_Organisation
+    type: multi
+    label: AI measures implemented at workplace
+    values: {1: "AI features in existing software", 2: "Specialised tools for my function", 3: "Own AI systems / agents built in-house", 4: "Dedicated AI team or role", 5: "AI training or courses", 6: "Protected time to learn & experiment", 7: "Rules & guidelines", 8: "Nothing so far", 9: "I don't know"}
+    exclusive: [8, 9]
+    display_if: "job_employed == 1"
+  - name: ai_time_saved
+    block: AI_Organisation
+    type: single
+    label: What happens to time saved by AI
+    values: {1: "More work is expected", 2: "Better quality on same tasks", 3: "Work I never had time for", 4: "Less overtime / pressure", 6: "More leisure time", 5: "No noticeable difference"}
+    display_if: "job_employed == 1"
+  - {name: ai_bschool_role_txt, block: AI Outlook, type: text, label: Role of business schools in an AI world, display_if: "screened_in == 1"}
+  - {name: ai_opp_concern_4, block: AI Outlook, type: text, label: Biggest AI opportunity in own field, display_if: "screened_in == 1"}
+  - {name: ai_opp_concern_5, block: AI Outlook, type: text, label: Biggest AI concern in own field, display_if: "screened_in == 1"}
+
+  # ---------------------------------------------------------------- closing
+  - name: bgs_member
+    block: Abschluss
+    type: single
+    label: Member of Beta Gamma Sigma
+    values: {1: "Yes", 2: "No", 4: "I don't know"}
+    display_if: "screened_in == 1"
+  - {name: final_comments_txt, block: Abschluss, type: text, label: Final comments, display_if: "screened_in == 1"}
+  - {name: ft_interview_consent, block: Abschluss, type: single, label: Agrees to FT interview contact, value_set: yes_no, display_if: "screened_in == 1"}
+  # ft_contact (name, e-mail) is stored separately from the survey data and is
+  # deliberately NOT part of the analysis dataset.

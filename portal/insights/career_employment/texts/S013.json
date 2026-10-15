@@ -1,0 +1,20 @@
+{
+  "school_id": "S013",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Full-time work of 62.1 % is well below the benchmarks, offset by 17.2 % part-time.",
+  "how_to_read": "Left: all respondents; middle: employed versus not employed; right: the detailed situation. Band widths show each group's share of respondents. The hatched 'Hidden' flow marks groups with fewer than 3 people, whose values are not shown.",
+  "key_findings": [
+    "Employment totals 89.7 %, with 62.1 % full-time and 17.2 % part-time.",
+    "Not employed totals 10.3 %; no one is not seeking work or in another situation.",
+    "Self-employment, other employment, seeking work and retirement are hidden (fewer than 3 people)."
+  ],
+  "benchmark": "Full-time work is 12.1 pp below the European region (74.2 %) and 12.8 pp below all schools (74.9 %). Part-time work is 7.0 pp above the region (10.2 %) and 9.3 pp above all schools (7.9 %). Employment is 3.5 pp below the regional 93.2 %.",
+  "caveats": "With n = 29, percentages move by several points per person, and four cells are hidden.",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:38:15Z"
+}

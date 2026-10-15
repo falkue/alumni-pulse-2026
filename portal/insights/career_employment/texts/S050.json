@@ -1,0 +1,19 @@
+{
+  "school_id": "S050",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Full-time work reaches 84.2 %, well above regional and overall levels.",
+  "how_to_read": "Flows run from all respondents (left) to employed or not employed (middle) and then to detailed situation (right); width is the share of respondents. Both branch totals are hidden, so branches show as lower bounds (≥) and a hatched \"Hidden\" flow leaves \"Respondents\" directly.",
+  "key_findings": [
+    "Full-time work accounts for 84.2 % of respondents.",
+    "Other employment, not seeking work, students, retirees and other situations are all absent; part-time, self-employed and seeking work are hidden."
+  ],
+  "benchmark": "Full-time work is 9.6 pp above Asia (74.6 %) and 9.3 pp above all schools (74.9 %). Total employment cannot be compared, as it is hidden for this school.",
+  "caveats": "With n = 19, each person moves the percentages by several points, and both totals are hidden (fewer than 3 people).",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:42:00Z"
+}

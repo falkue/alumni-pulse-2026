@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+.work/
+# Real survey data never goes into version control
+data/raw/**
+!data/raw/**/.gitkeep
+data/interim/**
+reports/output/**
+portal/firestore_export/**
+node_modules/
+portal/node_modules/
+portal/dist/
+.DS_Store

@@ -1,0 +1,52 @@
+{
+  "school_id": "S030",
+  "school_name": "Piedmont State University School of Business",
+  "is_demo_all_schools": false,
+  "published": true,
+  "metric": "career.employment.flow",
+  "unit": "percent of all respondents; null = hidden (fewer than 3 people)",
+  "own": {
+    "n": 32,
+    "employed_total": null,
+    "full_time": 78.1,
+    "part_time": 0,
+    "self_employed": null,
+    "other_employment": null,
+    "not_employed_total": null,
+    "seeking_work": 0,
+    "not_seeking_work": null,
+    "student": 0,
+    "retired": 0,
+    "other_situation": 0
+  },
+  "benchmarks": {
+    "all": {
+      "n": 1499,
+      "employed_total": 92.6,
+      "full_time": 74.9,
+      "part_time": 7.9,
+      "self_employed": 8,
+      "other_employment": 1.8,
+      "not_employed_total": 7.4,
+      "seeking_work": 4.3,
+      "not_seeking_work": 1.5,
+      "student": 0,
+      "retired": 0.6,
+      "other_situation": 1
+    },
+    "region=Americas": {
+      "n": 328,
+      "employed_total": 93,
+      "full_time": 76.8,
+      "part_time": 6.4,
+      "self_employed": 8.2,
+      "other_employment": 1.5,
+      "not_employed_total": 7,
+      "seeking_work": 3,
+      "not_seeking_work": 2.7,
+      "student": 0,
+      "retired": null,
+      "other_situation": null
+    }
+  }
+}

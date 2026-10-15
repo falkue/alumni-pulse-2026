@@ -1,0 +1,19 @@
+{
+  "school_id": "S015",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "At 83.3 %, full-time employment is clearly the strongest signal here, well above regional and overall levels.",
+  "how_to_read": "Left: all respondents; middle: employed or not; right: detailed situation, widths showing share of respondents. Branch totals are hidden, so branches show a lower bound (≥) and the hatched 'Hidden' stream runs directly from Respondents.",
+  "key_findings": [
+    "Full-time work accounts for 83.3 % of respondents, while seeking work, student, retired and other situation are all 0.0 %.",
+    "Part-time, self-employed, not seeking work and both totals are hidden (fewer than 3 people)."
+  ],
+  "benchmark": "Full-time work exceeds the regional 74.2 % by 9.1 pp and the 74.9 % across all schools by 8.4 pp. With the totals hidden, it is unclear whether this lifts overall employment.",
+  "caveats": "With n = 42, the hidden cells mean the not-employed side cannot be judged.",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:42:35Z"
+}

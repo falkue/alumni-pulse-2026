@@ -1,0 +1,13 @@
+{
+ "key": "institution_type=applied_sciences_university",
+ "type": "institution_type",
+ "label": "Applied Sciences University",
+ "n_schools": 2,
+ "n": 48,
+ "published": false,
+ "metrics": null,
+ "schools": [
+  "S001",
+  "S007"
+ ]
+}

@@ -1,0 +1,19 @@
+{
+  "school_id": "S035",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Employment is 89.7 %, 3.3 pp below the Americas, with full-time work at 72.4 %.",
+  "how_to_read": "The flows run from all respondents (left) through employed or not employed (middle) to the detailed situation (right); widths show the share of respondents. The hatched 'Hidden' flow marks groups of fewer than 3 people, whose values are not shown.",
+  "key_findings": [
+    "89.7 % are employed and 72.4 % work full-time; other employment is 0.0 %.",
+    "10.3 % are not employed; students and retired are 0.0 %, other groups are hidden (fewer than 3 people)."
+  ],
+  "benchmark": "Employment is 3.3 pp below the Americas (93.0 %) and 2.9 pp below all schools (92.6 %). Full-time work is 4.4 pp under the region (76.8 %) and 2.5 pp under all schools (74.9 %).",
+  "caveats": "Based on n = 29, so percentages move by several points per person; several cells are hidden (fewer than 3 people).",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:38:13Z"
+}

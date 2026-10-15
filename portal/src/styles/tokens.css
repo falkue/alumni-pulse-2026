@@ -1,0 +1,207 @@
+/*
+ * Design-Tokens des Portals – EINZIGE Stelle mit Farbwerten.
+ * ============================================================
+ * Design-System: "Circle / PostPlan" des Nutzers
+ * (Vorlage: ../docs/design/circle_tokens.css + circle_design_system.md).
+ *
+ * Aufbau:
+ *   Teil 1  Circle-Basistokens (Papier, Tinte, Linien, Palette) – Light + Dark
+ *   Teil 2  Portal-Aliase: die bisherigen Namen (--color-*, --chart-* …) zeigen
+ *           auf die Circle-Tokens. Komponenten-CSS nutzt nur diese Aliase.
+ * Branding ändern = nur Teil 1 anpassen.
+ *
+ * ANPASSUNG (Wunsch des Nutzers, 15.10.2026): "blauer Touch statt rosa/magenta".
+ *   - Hintergrund-Verläufe --w1/--w2/--w3 in Blautönen statt Pfirsich/Rosé
+ *   - Akzentwort in Überschriften (--headline-accent) blau statt koralle
+ *   Koralle bleibt nur für Bedeutung: Fehler/negative Veränderung.
+ *
+ * Schriften: Instrument Serif + Inter werden LOKAL aus @fontsource geladen
+ * (src/main.tsx), nicht von Google Fonts – keine IP-Übermittlung an Dritte.
+ * Dark Mode: Systemeinstellung, übersteuerbar mit <html data-theme="light|dark">.
+ * ============================================================
+ */
+
+/* ---------- Teil 1: Circle-Basistokens (Light) ---------- */
+:root {
+  color-scheme: light;
+  /* Flächen: warmes Papier, Fenster, Karte, Pane */
+  --page: #F3EFE7; --page-2: #E9E4D9;
+  --win: #FBF9F5; --card: #FFFFFF; --pane: #F6F3ED;
+  --side: rgba(238, 233, 224, .66);          /* halbtransparente Seitenleiste (mit backdrop-filter) */
+  --sel: rgba(45, 38, 28, .075); --hover: rgba(45, 38, 28, .04);
+  /* Tinte (Text) in vier Stufen */
+  --ink: #22211F; --ink-2: #5D5A54; --ink-3: #8C887F; --ink-4: #B7B2A8;
+  /* Haarlinien */
+  --line: rgba(45, 38, 28, .10); --line-2: rgba(45, 38, 28, .17);
+  /* semantische Palette */
+  --blue: #3E78D8; --coral: #E05A6D; --orange: #E5893A; --yellow: #D69A1E;
+  --green: #3A9A5D; --violet: #8466D3; --grey: #8A877F;
+  --solid: #3A73D3; --onsolid: #FFFFFF;
+  --tint: 13%;                                /* Stärke getönter Pills/Badges */
+  /* weiche Farbverläufe im Seitenhintergrund – blauer Touch (Circle-Original: #F2C7A3 / #C6D3EC / #E8B6C1) */
+  --w1: #C9DAF2; --w2: #BCD0EE; --w3: #D3E0F4;
+  /* Akzentwort in Serif-Überschriften – blau (Circle-Original: --coral) */
+  --headline-accent: #2F66C9;
+  /* Höhe/Schatten */
+  --shadow-card: 0 1px 2px rgba(45, 38, 28, .06), 0 6px 20px -10px rgba(45, 38, 28, .18);
+  --shadow-win: 0 0 0 .5px var(--line-2), 0 30px 70px -26px rgba(70, 45, 20, .38);
+  /* Schrift */
+  --serif: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* Radien */
+  --r-btn: 7px; --r-input: 7px; --r-card: 11px; --r-panel: 12px; --r-pill: 999px;
+
+  /* Kontrast-Korrektur (geprüft, siehe README "Design"): --ink-3 erreicht auf
+     Weiss nur ~3.5:1. Für kleinen Text (Labels, Meta, Achsen) daher --ink-meta (>= 4.5:1). */
+  --ink-meta: #6F6B63;
+}
+
+/* ---------- Teil 1: Circle-Basistokens (Dark) ---------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #141312; --page-2: #1C1B19; --win: #1E1D1B; --card: #272624; --pane: #1A1918;
+    --side: rgba(44, 41, 37, .62); --sel: rgba(255, 248, 235, .09); --hover: rgba(255, 248, 235, .05);
+    --ink: #EEEBE4; --ink-2: #B4AFA6; --ink-3: #88847C; --ink-4: #5D5953;
+    --line: rgba(255, 248, 235, .085); --line-2: rgba(255, 248, 235, .14);
+    --blue: #6C9DEC; --coral: #EE7587; --orange: #EFA062; --yellow: #E5B54E; --green: #5DB67E; --violet: #A38BE7; --grey: #9D998F;
+    --solid: #3F7BDB; --tint: 20%;
+    --w1: #1b2638; --w2: #1f2a3d; --w3: #182233;
+    --headline-accent: #86AEF2;
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px -10px rgba(0, 0, 0, .5);
+    --shadow-win: 0 0 0 .5px var(--line-2), 0 30px 70px -26px rgba(0, 0, 0, .7);
+    --ink-meta: #A29D94;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #141312; --page-2: #1C1B19; --win: #1E1D1B; --card: #272624; --pane: #1A1918;
+  --side: rgba(44, 41, 37, .62); --sel: rgba(255, 248, 235, .09); --hover: rgba(255, 248, 235, .05);
+  --ink: #EEEBE4; --ink-2: #B4AFA6; --ink-3: #88847C; --ink-4: #5D5953;
+  --line: rgba(255, 248, 235, .085); --line-2: rgba(255, 248, 235, .14);
+  --blue: #6C9DEC; --coral: #EE7587; --orange: #EFA062; --yellow: #E5B54E; --green: #5DB67E; --violet: #A38BE7; --grey: #9D998F;
+  --solid: #3F7BDB; --tint: 20%;
+  --w1: #1b2638; --w2: #1f2a3d; --w3: #182233;
+  --headline-accent: #86AEF2;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px -10px rgba(0, 0, 0, .5);
+  --shadow-win: 0 0 0 .5px var(--line-2), 0 30px 70px -26px rgba(0, 0, 0, .7);
+  --ink-meta: #A29D94;
+}
+
+/* ---------- Teil 2: Portal-Aliase (folgen Light/Dark automatisch) ---------- */
+:root {
+  /* Schrift */
+  --font-sans: var(--sans);
+  --font-serif: var(--serif);
+  --font-size-xs: 10.5px;   /* Labels/Kicker (uppercase) */
+  --font-size-sm: 12px;     /* Meta */
+  --font-size-md: 13.5px;   /* UI-Text */
+  --font-size-lg: 15px;
+  --font-size-xl: 30px;     /* Seitentitel (Serif) */
+  --font-size-2xl: 20px;    /* KPI-Wert */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 650;
+  --line-height: 1.45;
+  --label-tracking: .08em;
+
+  /* Flächen und Text */
+  --color-bg: var(--page);
+  --color-window: var(--win);
+  --color-surface: var(--card);
+  --color-surface-muted: var(--pane);
+  --color-sidebar: var(--side);
+  --color-hover: var(--hover);
+  --color-selected: var(--sel);
+  --color-text: var(--ink);
+  --color-text-secondary: var(--ink-2);
+  --color-text-muted: var(--ink-meta);
+  --color-border: var(--line);
+  --color-border-strong: var(--line-2);
+  --color-skeleton: var(--sel);
+  --color-headline-accent: var(--headline-accent);   /* das eine Akzentwort in Überschriften (blau) */
+  --wash-1: var(--w1);
+  --wash-2: var(--w2);
+  --wash-3: var(--w3);
+
+  /* Akzent */
+  --color-accent: color-mix(in srgb, var(--solid) 88%, black); /* leicht abgedunkelt: weisse Schrift >= 4.5:1 auch im Dark Mode */
+  --color-accent-hover: color-mix(in srgb, var(--solid) 76%, black);
+  --color-accent-contrast: var(--onsolid);
+  --color-accent-soft: color-mix(in srgb, var(--blue) var(--tint), var(--card));
+  --color-focus: var(--blue);
+  --color-link: color-mix(in srgb, var(--blue) 85%, var(--ink));
+
+  /* Status-Pills: getönter Hintergrund + abgedunkelte Schrift (Circle-Formel) */
+  --color-success-bg: color-mix(in srgb, var(--green) var(--tint), var(--card));
+  --color-success-text: color-mix(in srgb, var(--green) 70%, var(--ink));
+  --color-warning-bg: color-mix(in srgb, var(--orange) var(--tint), var(--card));
+  --color-warning-text: color-mix(in srgb, var(--orange) 55%, var(--ink)); /* 55 % statt 70 %: Kontrast >= 4.5:1 */
+  --color-danger-bg: color-mix(in srgb, var(--coral) var(--tint), var(--card));
+  --color-danger-text: color-mix(in srgb, var(--coral) 70%, var(--ink));
+  --color-neutral-bg: color-mix(in srgb, var(--grey) var(--tint), var(--card));
+  --color-neutral-text: var(--ink-2);
+  --color-demo-bg: color-mix(in srgb, var(--yellow) var(--tint), var(--card));
+  --color-demo-text: color-mix(in srgb, var(--yellow) 55%, var(--ink));
+  --color-online: var(--green);
+
+  /* Diagramme */
+  --chart-own: var(--blue);
+  --chart-own-soft: color-mix(in srgb, var(--blue) 40%, var(--card)); /* Trajectory */
+  --chart-peer: var(--ink-4);               /* anonyme Hochschulen */
+  --chart-peer-range: var(--line-2);
+  --chart-benchmark: var(--ink-3);          /* gestrichelte Linie */
+  --chart-marker: var(--ink-2);             /* Benchmark-Tick in der Pyramide */
+  --chart-band: color-mix(in srgb, var(--ink-3) 16%, transparent);
+  --chart-grid: var(--line);
+  --chart-axis-text: var(--ink-meta);
+  --chart-female: var(--violet);
+  --chart-male: var(--blue);
+  --chart-hatch: var(--line-2);             /* ausgeblendete Zellen "< 3" */
+  /* KI-Karten (Circle "AI/suggestion card": violetter Hauch, violetter Rand, Tag) */
+  --color-ai: color-mix(in srgb, var(--violet) 80%, var(--ink));
+  --color-ai-bg: color-mix(in srgb, var(--violet) 5%, var(--card));
+  --color-ai-border: color-mix(in srgb, var(--violet) 30%, transparent);
+
+  /* Sankey "Employment status" (Farben wie in der abgenommenen Referenz, über die Palette) */
+  --chart-respondents: var(--grey);
+  --chart-employed: var(--blue);
+  --chart-part-time: color-mix(in srgb, var(--blue) 72%, var(--card));       /* hellblau */
+  --chart-self-employed: var(--violet);
+  --chart-other-employment: color-mix(in srgb, var(--blue) 45%, var(--card)); /* blassblau */
+  --chart-not-employed: var(--coral);
+  --chart-not-seeking: var(--orange);
+  --chart-student: var(--grey);
+  --chart-retired: var(--ink-4);
+  --chart-other-situation: color-mix(in srgb, var(--ink-4) 55%, var(--card));
+  --chart-flow-opacity: .28;
+  --chart-flow-opacity-hover: .55;
+  --chart-delta-up: color-mix(in srgb, var(--green) 80%, var(--ink));
+  --chart-delta-down: color-mix(in srgb, var(--coral) 80%, var(--ink));
+
+  /* Abstände */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  /* Radien */
+  --radius-sm: var(--r-btn);
+  --radius-md: var(--r-card);
+  --radius-lg: var(--r-panel);
+  --radius-pill: var(--r-pill);
+
+  /* Schatten */
+  --shadow-window: var(--shadow-win);
+
+  /* Layout */
+  --sidebar-width: 232px;
+  --content-max-width: 1120px;
+  --control-height: 28px;
+  --input-height: 30px;
+  --breakpoint-mobile: 760px; /* nur Dokumentation; Media Queries können keine Variablen nutzen */
+}

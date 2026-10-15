@@ -1,0 +1,41 @@
+{
+ "mode": "synthetic",
+ "raw_file": "alumni_pulse_2026_synthetic_qualtrics_with_texts.csv",
+ "rows_read": 1688,
+ "exclusions": {
+  "no_consent": 15,
+  "screen_out": 37,
+  "incomplete": 98,
+  "duplicate": 8,
+  "bot": 8,
+  "speeder": 23,
+  "unknown_school": 0,
+  "valid": 1499
+ },
+ "median_duration_seconds": 941.0,
+ "valid_respondents": 1499,
+ "schools_with_published_profile": 51,
+ "benchmark_groups_published": [
+  "all",
+  "region=Americas",
+  "region=Asia",
+  "region=Europe",
+  "ranking_tier=1",
+  "ranking_tier=2",
+  "ranking_tier=3",
+  "institution_type=private_business_school",
+  "institution_type=public_university",
+  "aacsb=0",
+  "aacsb=1"
+ ],
+ "benchmark_groups_suppressed": [
+  "institution_type=applied_sciences_university"
+ ],
+ "salary_flags": {
+  "": 1483,
+  "implausible": 11,
+  "outlier": 5
+ },
+ "logic_violations": 0,
+ "unknown_columns": []
+}

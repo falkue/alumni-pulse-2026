@@ -1,0 +1,33 @@
+<!doctype html>
+<!-- REFERENCE ONLY: chat mock-up approved 15 Oct 2026 ("so wie es ist").
+     Portal: data from metrics["career.employment.flow"] (shares in % of respondents, null = hidden small cell),
+     toggle = Your school / own region / all schools instead of the region buttons below. -->
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Employment sankey reference</title>
+<style>body{font-family:-apple-system,system-ui,sans-serif;max-width:720px;margin:24px auto;padding:0 16px;--text-primary:#22211F;--text-secondary:#5D5A54;color:var(--text-primary)}</style></head><body>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 10px">
+  <button data-r="All">All regions</button><button data-r="Europe">Europe</button><button data-r="Americas">Americas</button><button data-r="Asia">Asia</button>
+  <span id="sn" style="font-size:13px;color:var(--text-secondary);margin-left:6px"></span></div>
+<div id="sk"></div><div id="st" style="font-size:13px;color:var(--text-secondary);min-height:20px;margin-top:4px">Hover a flow for details.</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+<script>
+const F={"All":{"n":1499,"links":[["Employed","Full-time",1123],["Employed","Other employment",27],["Employed","Part-time",118],["Employed","Self-employed",120],["Not employed","Not seeking work",23],["Not employed","Other situation",15],["Not employed","Retired",9],["Not employed","Seeking work",64]]},"Europe":{"n":745,"links":[["Employed","Full-time",553],["Employed","Other employment",11],["Employed","Part-time",76],["Employed","Self-employed",54],["Not employed","Not seeking work",9],["Not employed","Other situation",10],["Not employed","Retired",6],["Not employed","Seeking work",26]]},"Americas":{"n":328,"links":[["Employed","Full-time",252],["Employed","Other employment",5],["Employed","Part-time",21],["Employed","Self-employed",27],["Not employed","Not seeking work",9],["Not employed","Other situation",2],["Not employed","Retired",2],["Not employed","Seeking work",10]]},"Asia":{"n":426,"links":[["Employed","Full-time",318],["Employed","Other employment",11],["Employed","Part-time",21],["Employed","Self-employed",39],["Not employed","Not seeking work",5],["Not employed","Other situation",3],["Not employed","Retired",1],["Not employed","Seeking work",28]]}};
+const ORDER=["Respondents","Employed","Not employed","Full-time","Part-time","Self-employed","Other employment","Seeking work","Not seeking work","Retired","Other situation"];
+const COL={"Respondents":"#888780","Employed":"#3E78D8","Full-time":"#3E78D8","Part-time":"#6C9DEC","Self-employed":"#8466D3","Other employment":"#85B7EB","Not employed":"#E05A6D","Seeking work":"#E05A6D","Not seeking work":"#E5893A","Retired":"#B4B2A9","Other situation":"#D3D1C7"};
+const W=680,H=380,svg=d3.select("#sk").append("svg").attr("viewBox",`0 0 ${W} ${H}`).attr("width","100%");
+const gL=svg.append("g").attr("fill","none"),gN=svg.append("g"),gT=svg.append("g"),fmt=v=>v.toLocaleString("en-GB");
+function draw(r){const d=F[r],tot=d.n,emp=d.links.filter(l=>l[0]==="Employed").reduce((a,l)=>a+l[2],0);
+  d3.select("#sn").text(`n = ${fmt(tot)} · ${(100*emp/tot).toFixed(1)} % employed`);
+  const links=[{source:"Respondents",target:"Employed",value:emp},{source:"Respondents",target:"Not employed",value:tot-emp},...d.links.map(l=>({source:l[0],target:l[1],value:l[2]}))].filter(l=>l.value>0);
+  const g=d3.sankey().nodeId(n=>n.name).nodeWidth(12).nodePadding(14).nodeSort((a,b)=>ORDER.indexOf(a.name)-ORDER.indexOf(b.name)).extent([[4,8],[W-170,H-8]])({nodes:ORDER.map(name=>({name})),links});
+  const t=d3.transition().duration(500);
+  gL.selectAll("path").data(g.links,l=>l.source.name+">"+l.target.name).join(e=>e.append("path").attr("stroke-opacity",0.28)).attr("stroke",l=>COL[l.target.name])
+    .on("mouseenter",function(e,l){d3.select(this).attr("stroke-opacity",0.55);d3.select("#st").text(`${l.source.name} → ${l.target.name}: ${fmt(l.value)} (${(100*l.value/tot).toFixed(1)} % of respondents${l.source.name!=="Respondents"?`, ${(100*l.value/l.source.value).toFixed(1)} % of ${l.source.name.toLowerCase()}`:""})`)})
+    .on("mouseleave",function(){d3.select(this).attr("stroke-opacity",0.28)}).transition(t).attr("d",d3.sankeyLinkHorizontal()).attr("stroke-width",l=>Math.max(1.5,l.width));
+  gN.selectAll("rect").data(g.nodes,n=>n.name).join("rect").attr("rx",3).attr("fill",n=>COL[n.name]).transition(t).attr("x",n=>n.x0).attr("y",n=>n.y0).attr("width",n=>n.x1-n.x0).attr("height",n=>Math.max(1,n.y1-n.y0));
+  const lab=gT.selectAll("g").data(g.nodes,n=>n.name).join(e=>{const a=e.append("g");a.append("text").attr("class","a");a.append("text").attr("class","b");return a});
+  lab.transition(t).attr("transform",n=>`translate(${n.depth===2?n.x1+8:n.x1+6},${(n.y0+n.y1)/2})`);
+  lab.select(".a").attr("dy",n=>n.depth===2?"0.35em":"-0.2em").style("font-size","12px").style("font-weight",n=>n.depth<2?500:400).text(n=>n.depth===2?`${n.name}  ${fmt(n.value)} · ${(100*n.value/tot).toFixed(1)} %`:n.name);
+  lab.select(".b").attr("dy","1.1em").style("font-size","11px").style("fill","var(--text-secondary)").text(n=>n.depth===2?"":`${fmt(n.value)} · ${(100*n.value/tot).toFixed(1)} %`);}
+d3.selectAll("button[data-r]").on("click",function(){draw(this.dataset.r)});draw("All");
+</script></body></html>

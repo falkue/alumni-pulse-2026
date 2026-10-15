@@ -1,0 +1,46 @@
+country,iso2,continent,region,currency,fx_lcu_per_usd,ppp_lcu_per_intl_dollar,salary_level_ppp_usd,econ_outlook_bias
+Switzerland,CH,Europe,Europe,CHF,0.88,1.05,105000,-0.1
+Germany,DE,Europe,Europe,EUR,0.92,0.75,85000,-0.4
+Austria,AT,Europe,Europe,EUR,0.92,0.76,82000,-0.2
+United Kingdom of Great Britain and Northern Ireland,GB,Europe,Europe,GBP,0.78,0.68,78000,-0.3
+France,FR,Europe,Europe,EUR,0.92,0.73,72000,-0.4
+Netherlands,NL,Europe,Europe,EUR,0.92,0.78,88000,-0.1
+Belgium,BE,Europe,Europe,EUR,0.92,0.76,80000,-0.2
+Italy,IT,Europe,Europe,EUR,0.92,0.66,62000,-0.2
+Spain,ES,Europe,Europe,EUR,0.92,0.6,58000,0.1
+Sweden,SE,Europe,Europe,SEK,10.6,8.6,74000,0.0
+Poland,PL,Europe,Europe,PLN,3.95,1.85,60000,0.2
+United States of America,US,North America,Americas,USD,1.0,1.0,115000,0.0
+Canada,CA,North America,Americas,CAD,1.4,1.23,88000,-0.1
+Mexico,MX,North America,Americas,MXN,18.9,9.6,48000,0.1
+Brazil,BR,South America,Americas,BRL,5.6,2.45,42000,-0.1
+China,CN,Asia,Asia,CNY,7.2,4.2,50000,0.3
+India,IN,Asia,Asia,INR,85.0,21.0,45000,0.7
+Singapore,SG,Asia,Asia,SGD,1.33,0.83,98000,0.3
+Japan,JP,Asia,Asia,JPY,150.0,95.0,62000,-0.2
+"Korea, Republic of",KR,Asia,Asia,KRW,1400.0,860.0,68000,-0.1
+Hong Kong (S.A.R.),HK,Asia,Asia,HKD,7.8,5.5,85000,-0.1
+Thailand,TH,Asia,Asia,THB,34.5,12.5,40000,0.1
+Indonesia,ID,Asia,Asia,IDR,16300.0,4700.0,36000,0.5
+Viet Nam,VN,Asia,Asia,VND,25300.0,7900.0,34000,0.6
+United Arab Emirates,AE,Asia,Other,AED,3.6725,2.2,95000,0.6
+Australia,AU,Oceania,Other,AUD,1.55,1.45,82000,0.0
+Ireland,IE,Europe,Europe,EUR,0.92,0.8,90000,0.1
+Luxembourg,LU,Europe,Europe,EUR,0.92,0.85,100000,0.0
+Denmark,DK,Europe,Europe,DKK,6.9,6.6,85000,0.0
+Norway,NO,Europe,Europe,NOK,10.8,9.5,85000,-0.1
+Portugal,PT,Europe,Europe,EUR,0.92,0.55,50000,0.1
+Czechia,CZ,Europe,Europe,CZK,23.0,12.5,55000,0.0
+Malaysia,MY,Asia,Asia,MYR,4.4,1.6,48000,0.3
+Philippines,PH,Asia,Asia,PHP,57.0,19.5,36000,0.4
+Taiwan,TW,Asia,Asia,TWD,31.0,14.5,60000,0.1
+Saudi Arabia,SA,Asia,Other,SAR,3.75,1.9,85000,0.5
+Chile,CL,South America,Americas,CLP,950.0,430.0,48000,0.0
+Colombia,CO,South America,Americas,COP,4100.0,1450.0,38000,0.0
+Argentina,AR,South America,Americas,ARS,1100.0,400.0,38000,-0.3
+South Africa,ZA,Africa,Other,ZAR,18.2,7.6,42000,-0.2
+Nigeria,NG,Africa,Other,NGN,1550.0,200.0,28000,0.1
+Kenya,KE,Africa,Other,KES,129.0,45.0,26000,0.2
+Israel,IL,Asia,Other,ILS,3.6,3.9,80000,0.0
+Türkiye,TR,Asia,Other,TRY,38.0,16.5,45000,-0.1
+New Zealand,NZ,Oceania,Other,NZD,1.68,1.45,72000,0.0

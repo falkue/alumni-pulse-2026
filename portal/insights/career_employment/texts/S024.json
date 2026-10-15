@@ -1,0 +1,19 @@
+{
+  "school_id": "S024",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Almost every employment category is hidden; only absences, such as no self-employment, are visible.",
+  "how_to_read": "Left: all respondents; middle: employed or not; right: detailed situation, with widths showing share of respondents. Both branch totals are hidden, so branches show a lower bound (≥) and the hatched 'Hidden' stream runs directly from Respondents.",
+  "key_findings": [
+    "Self-employed, other employment, seeking work, not seeking work, student and retired are all 0.0 %.",
+    "Full-time, part-time, other situation and both totals are hidden (fewer than 3 people), so no employment rate can be read."
+  ],
+  "benchmark": "Nobody here is self-employed or seeking work, against the regional 7.2 % and 3.5 %, and 8.0 % and 4.3 % across all schools. These are the only comparable values.",
+  "caveats": "With n = 28, percentages move by several points per person, and the hidden cells make the chart a weak basis for comparison.",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:42:35Z"
+}

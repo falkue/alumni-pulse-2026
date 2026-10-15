@@ -1,0 +1,19 @@
+{
+  "school_id": "S016",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Employment of 84.6 % is clearly below both the regional and the overall level; full-time work is closer.",
+  "how_to_read": "Left: all respondents; middle: employed or not; right: detailed situation, with widths showing share of respondents. The hatched 'Hidden' stream marks detail cells with fewer than 3 people.",
+  "key_findings": [
+    "84.6 % of respondents are employed, of whom 71.8 % work full-time; 15.4 % are not employed.",
+    "Within the not-employed branch only students (0.0 %) are visible; seeking work, not seeking work, retired and other situation are hidden (fewer than 3 people)."
+  ],
+  "benchmark": "Employment is 8.6 pp below the regional 93.2 % and 8.0 pp below the 92.6 % across all schools. Full-time work is closer, 2.4 pp below the region (74.2 %), so the shortfall lies mainly elsewhere.",
+  "caveats": "With n = 39, each person still moves percentages noticeably; hidden cells prevent a split of the not-employed group.",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:42:35Z"
+}

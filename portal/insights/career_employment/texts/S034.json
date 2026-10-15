@@ -1,0 +1,19 @@
+{
+  "school_id": "S034",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Only full-time work is visible at 75.0 %; total employment is hidden for this school.",
+  "how_to_read": "The flows run from all respondents (left) through employed or not employed (middle) to the detailed situation (right); widths show the share of respondents. The hatched 'Hidden' flow marks groups of fewer than 3 people, whose values are not shown.",
+  "key_findings": [
+    "75.0 % work full-time; students, retired and other situations are each 0.0 %.",
+    "The employed total, part-time, self-employment and all remaining groups are hidden (fewer than 3 people)."
+  ],
+  "benchmark": "Full-time work of 75.0 % is 0.1 pp above all schools (74.9 %) and 1.8 pp below the Americas (76.8 %). Overall employment cannot be benchmarked because it is hidden.",
+  "caveats": "Based on n = 28, so percentages move by several points per person; most cells are hidden (fewer than 3 people).",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:38:13Z"
+}

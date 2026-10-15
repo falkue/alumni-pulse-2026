@@ -1,0 +1,19 @@
+{
+  "school_id": "S045",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Every respondent is employed, a rare 100.0 %, with full-time work at 85.0 %.",
+  "how_to_read": "Flows run from all respondents (left) to employed or not employed (middle) and then to detailed situation (right); width is the share of respondents. The hatched \"Hidden\" flow sits within the employed branch and covers details held back because fewer than 3 people fall into them.",
+  "key_findings": [
+    "Employment is 100.0 % and the not-employed branch is empty.",
+    "Full-time work accounts for 85.0 %; part-time, self-employed and other employment are hidden (fewer than 3 people)."
+  ],
+  "benchmark": "Employment is 8.7 pp above Asia (91.3 %) and 7.4 pp above all schools (92.6 %). Full-time work leads Asia (74.6 %) by 10.4 pp and all schools (74.9 %) by 10.1 pp.",
+  "caveats": "With n = 20, each person moves the percentages by several points, so a single non-employed graduate would visibly change the picture.",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:42:00Z"
+}

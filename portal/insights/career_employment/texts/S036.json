@@ -1,0 +1,19 @@
+{
+  "school_id": "S036",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Full-time work of 82.5 % is 7.9 pp above the Asian figure; employment matches the benchmarks.",
+  "how_to_read": "The flows run from all respondents (left) through employed or not employed (middle) to the detailed situation (right); widths show the share of respondents. The hatched 'Hidden' flow marks groups of fewer than 3 people, whose values are not shown.",
+  "key_findings": [
+    "92.5 % are employed, 82.5 % of them full-time; part-time work is 0.0 %.",
+    "7.5 % are not employed; seeking work and other situations are hidden (fewer than 3 people)."
+  ],
+  "benchmark": "Employment is 1.2 pp above Asia (91.3 %) and 0.1 pp below all schools (92.6 %). Full-time work exceeds the region (74.6 %) by 7.9 pp and all schools (74.9 %) by 7.6 pp, while part-time work of 0.0 % compares with 4.9 % in Asia.",
+  "caveats": "Based on n = 40; self-employment, other employment and some not-employed groups are hidden (fewer than 3 people).",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:38:13Z"
+}

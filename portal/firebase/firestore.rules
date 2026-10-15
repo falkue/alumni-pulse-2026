@@ -1,0 +1,256 @@
+rules_version = '2';
+
+// =============================================================================
+// ENTWURF – Firestore Security Rules für "Global Alumni Pulse 2026"
+// -----------------------------------------------------------------------------
+// Status: Entwurf, NICHT deployt. Vor dem ersten Deployment im Emulator mit
+// @firebase/rules-unit-testing prüfen (Testfälle: docs/FIREBASE_MIGRATION.md).
+// Datenmodell: docs/DATA_MODEL.md
+//
+// Grundprinzipien
+//  1. Default deny: Alles, was unten nicht ausdrücklich erlaubt ist, ist verboten.
+//  2. Mandantentrennung über schoolId: Eine Hochschule sieht nur ihre eigenen
+//     Dokumente (schools, aggregates, reports). Admins sehen alles.
+//  3. Clients schreiben fast nie. Kennzahlen, Benchmarks, Reports und
+//     Stammdaten werden ausschließlich serverseitig (Admin SDK / Import-Skript /
+//     Cloud Functions) geschrieben – das Admin SDK umgeht diese Rules.
+//     Einzige Client-Schreibrechte: Admin ändert den Status eines Accounts und
+//     SOLL im selben Batch einen auditLog-Eintrag schreiben.
+//     ACHTUNG: Rules können nicht erzwingen, DASS ein Audit-Eintrag geschrieben
+//     wird (ein Statuswechsel ohne Audit ist erlaubt, siehe rules-smoke.mjs).
+//     Sie prüfen nur, dass ein geschriebener Eintrag zum Statuswechsel passt.
+//     Ist ein lückenloses Protokoll nötig: Audit serverseitig in der Cloud
+//     Function onUserWrite schreiben (siehe docs/DATA_MODEL.md).
+//     Lokale Demo: kein auditLog, nur updatedAt/updatedBy am Account.
+//  4. Doppelte Absicherung der Identität:
+//       - Custom Claims {role, schoolId} im ID-Token (schnell, ohne Lesezugriff)
+//       - users/{uid}.status == 'active' (Quelle der Wahrheit, sofort wirksam)
+//     Grund: Ein ID-Token bleibt nach dem Sperren bis zu 1 h gültig. Der
+//     Abgleich mit dem users-Dokument schließt diese Lücke sofort.
+//  5. Spiegel der Domänenregeln in src/domain/access.ts und
+//     src/services/local/localData.ts (canSignIn, canReadSchool, assertAdmin,
+//     setAccountStatus-Validierung).
+// =============================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -------------------------------------------------------------------------
+    // Helper
+    // -------------------------------------------------------------------------
+
+    // Angemeldet (beliebiger Firebase-Auth-User).
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Pfad des users-Dokuments der anfragenden Person.
+    function myUserPath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    // users-Dokument der anfragenden Person. Existiert es nicht, erzeugt get()
+    // einen Fehler – Fehler führen in Rules immer zur Ablehnung (fail closed).
+    // Mehrfache get()-Aufrufe desselben Dokuments werden pro Anfrage gecacht.
+    function myUser() {
+      return get(myUserPath()).data;
+    }
+
+    // Wert eines Custom Claims, oder null wenn der Claim fehlt.
+    function claim(name) {
+      return request.auth.token.get(name, null);
+    }
+
+    // Aktiver Account: angemeldet UND users/{uid}.status == 'active'.
+    // invited/disabled werden hier abgewiesen (spiegelt canSignIn()).
+    function isActive() {
+      return isSignedIn() && myUser().status == 'active';
+    }
+
+    // Admin: Claim role == 'admin' UND users-Dokument bestätigt Rolle und Status.
+    // Der Claim wird zuerst geprüft (kostenlos); erst danach der Dokument-Lesezugriff.
+    function isAdmin() {
+      return isSignedIn()
+        && claim('role') == 'admin'
+        && myUser().role == 'admin'
+        && myUser().status == 'active';
+    }
+
+    // Mitglied der Hochschule schoolId: Claim role == 'school', Claim schoolId
+    // passt, und das users-Dokument bestätigt schoolId und Status 'active'.
+    // (Spiegelt canReadSchool() für die Rolle 'school'.)
+    function isSchoolMember(schoolId) {
+      return isSignedIn()
+        && claim('role') == 'school'
+        && claim('schoolId') == schoolId
+        && myUser().schoolId == schoolId
+        && myUser().status == 'active';
+    }
+
+    // Lesen einer mandantenbezogenen Ressource: Admin oder eigene Hochschule.
+    //
+    // Gepoolte Demo-Sicht "ALL" (schools/ALL, aggregates/ALL/...): Sie ist ein
+    // eigener Mandant mit schoolId == 'ALL'. Lesen dürfen sie deshalb NUR Admins
+    // und der Demo-Account (Claim + users-Dokument mit schoolId 'ALL'). Echte
+    // Hochschulen sehen ALL nicht – und der Demo-Account sieht keine echte
+    // Hochschule. Dafür ist keine Sonderregel nötig; die Mandantentrennung unten
+    // deckt es ab. WICHTIG: Den Demo-Account in Produktion nur bewusst anlegen
+    // (Callable inviteAccount mit schoolId 'ALL') und bei Bedarf deaktivieren.
+    function canReadSchool(schoolId) {
+      return isAdmin() || isSchoolMember(schoolId);
+    }
+
+    // Erlaubte Zielwerte beim Statuswechsel. 'invited' wird nur beim Anlegen
+    // (serverseitig, Callable Function inviteAccount) gesetzt.
+    function isSettableStatus(s) {
+      return s in ['active', 'disabled'];
+    }
+
+    function isKnownStatus(s) {
+      return s in ['invited', 'active', 'disabled'];
+    }
+
+    // -------------------------------------------------------------------------
+    // schools/{schoolId} – Stammdaten (Quelle: data/reference/schools.csv)
+    // -------------------------------------------------------------------------
+    match /schools/{schoolId} {
+      // Einzeldokument: Admin oder eigene Hochschule (DataService.getSchool).
+      allow get: if canReadSchool(schoolId);
+      // Liste aller Hochschulen: nur Admin (DataService.listSchools).
+      allow list: if isAdmin();
+      // Stammdaten pflegt nur das Seed-/Import-Skript (Admin SDK).
+      allow write: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // users/{uid} – Accounts; Dokument-ID == Firebase-Auth-uid
+    // -------------------------------------------------------------------------
+    match /users/{userId} {
+      // Eigenes Dokument immer lesbar (auch bei invited/disabled, damit die UI
+      // "noch nicht freigeschaltet" bzw. "gesperrt" anzeigen kann).
+      allow get: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      // Listen/Abfragen (DataService.listAccounts): nur Admin.
+      allow list: if isAdmin();
+
+      // Anlegen und Löschen nie durch Clients: Einladen läuft über die
+      // Callable Function inviteAccount (legt Auth-User + Dokument an).
+      allow create, delete: if false;
+
+      // Statuswechsel durch Admin (DataService.setAccountStatus).
+      allow update: if isAdmin() && isValidStatusChange(userId);
+
+      // Regeln für einen Statuswechsel (spiegelt localData.setAccountStatus):
+      //  - nur status, updatedAt, updatedBy dürfen sich ändern
+      //    (role, schoolId, email, displayName, createdAt bleiben unverändert)
+      //  - neuer Status nur 'active' oder 'disabled'
+      //  - updatedBy == uid des handelnden Admins
+      //  - updatedAt == Serverzeit (Client muss serverTimestamp() senden)
+      //  - ein Admin kann sich nicht selbst deaktivieren
+      function isValidStatusChange(userId) {
+        let after = request.resource.data;
+        return after.diff(resource.data).affectedKeys()
+                 .hasOnly(['status', 'updatedAt', 'updatedBy'])
+          && isSettableStatus(after.status)
+          && after.updatedBy == request.auth.uid
+          && after.updatedAt == request.time
+          && !(userId == request.auth.uid && after.status == 'disabled');
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // aggregates/{schoolId}/sections/{sectionId} – Kennzahlen pro Hochschule
+    // Von der Datenpipeline erzeugt, per Admin SDK importiert. Nur aggregierte
+    // Werte (n >= Mindestfallzahl), nie Einzelantworten.
+    // -------------------------------------------------------------------------
+    match /aggregates/{schoolId} {
+      // Optionales Kopf-Dokument (z. B. Liste der verfügbaren Sektionen).
+      allow read: if canReadSchool(schoolId);
+      allow write: if false;
+
+      match /sections/{sectionId} {
+        allow read: if canReadSchool(schoolId);
+        allow write: if false;
+      }
+
+      // Zeitreihe je Befragungswelle (Frage 1 u. a.): eigene Werte, Benchmark-Band
+      // und ANONYME Peer-Werte (ohne Namen/IDs – das stellt der Import sicher).
+      match /waves/{year} {
+        allow read: if canReadSchool(schoolId);
+        allow write: if false;
+      }
+
+      // KI-Interpretationen je Diagramm (später: Gemini im Backend, siehe
+      // docs/FIREBASE_MIGRATION.md). Schreiben nur Cloud Function (Admin SDK).
+      match /insights/{chartId} {
+        allow read: if canReadSchool(schoolId);
+        allow write: if false;
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // benchmarks/{benchmarkId} – Vergleichsgruppen (Region, Typ, Gesamt …)
+    // Für alle aktiven Accounts lesbar. Zusätzliche Absicherung: nur Dokumente
+    // mit publishable == true (vom Import nur gesetzt, wenn n >= minN und
+    // nSchools >= minSchools). Abfragen müssen deshalb
+    // where('publishable', '==', true) enthalten, sonst lehnt Firestore sie ab.
+    // -------------------------------------------------------------------------
+    match /benchmarks/{benchmarkId} {
+      allow read: if isActive() && resource.data.publishable == true;
+      allow write: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // reports/{schoolId} – Metadaten zum PDF-Report (Datei liegt in Storage
+    // unter reports/{schoolId}/…pdf, siehe storage.rules)
+    // -------------------------------------------------------------------------
+    match /reports/{schoolId} {
+      allow read: if canReadSchool(schoolId);
+      allow write: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // auditLog/{eventId} – Protokoll der Statuswechsel (append-only)
+    // -------------------------------------------------------------------------
+    match /auditLog/{eventId} {
+      allow read: if isAdmin();
+      // Anlegen nur durch Admin und nur passend zu einem Statuswechsel im selben
+      // Batch (Pflicht ist der Audit-Eintrag damit nicht – siehe Grundprinzip 3).
+      allow create: if isAdmin() && isValidAuditEvent();
+      // Unveränderlich: kein Ändern, kein Löschen – auch nicht durch Admins.
+      allow update, delete: if false;
+
+      // Ein Audit-Eintrag muss exakt zum gleichzeitigen users-Update passen:
+      //  - get()      liefert den Zustand VOR dem Batch  -> fromStatus
+      //  - getAfter() liefert den Zustand NACH dem Batch -> toStatus, updatedAt
+      //  updatedAt == request.time beweist, dass das users-Update im selben
+      //  Batch geschrieben wird (alle Writes eines Batches teilen request.time).
+      function isValidAuditEvent() {
+        let e = request.resource.data;
+        let fields = ['type', 'targetUid', 'targetSchoolId', 'fromStatus',
+                      'toStatus', 'actorUid', 'at'];
+        let targetPath = /databases/$(database)/documents/users/$(e.targetUid);
+        let before = get(targetPath).data;
+        let after = getAfter(targetPath).data;
+        return e.keys().hasAll(fields)
+          && e.keys().hasOnly(fields)
+          && e.type == 'account.status_changed'
+          && e.actorUid == request.auth.uid
+          && e.at == request.time
+          && isKnownStatus(e.fromStatus)
+          && isSettableStatus(e.toStatus)
+          && before.status == e.fromStatus
+          && after.status == e.toStatus
+          && after.updatedAt == request.time
+          && after.updatedBy == request.auth.uid
+          && e.targetSchoolId == after.schoolId;
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // Default deny für alle übrigen Pfade (explizit, zur Lesbarkeit).
+    // -------------------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

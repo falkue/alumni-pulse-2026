@@ -1,0 +1,37 @@
+{
+  "name": "alumni-pulse-portal",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Global Alumni Pulse 2026 – lokales Demo-Portal (Admin- und Hochschul-Sicht), Firebase-portierbar.",
+  "scripts": {
+    "seed": "node scripts/build-seed.mjs",
+    "predev": "npm run seed",
+    "dev": "vite --port 5174 --strictPort",
+    "prebuild": "npm run seed",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --port 5174",
+    "pretest": "npm run seed",
+    "test": "vitest run",
+    "typecheck": "tsc -b --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/instrument-serif": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.4"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "jsdom": "^29.1.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.4"
+  }
+}

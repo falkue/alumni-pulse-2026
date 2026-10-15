@@ -1,0 +1,19 @@
+{
+  "school_id": "S017",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Full-time work of 68.2 % is the lowest comparable value, noticeably under regional and overall shares.",
+  "how_to_read": "Left: all respondents; middle: employed or not; right: detailed situation, widths showing share of respondents. Branch totals are hidden, so branches show a lower bound (≥) and the hatched 'Hidden' stream runs directly from Respondents.",
+  "key_findings": [
+    "Full-time work is 68.2 %; other employment, not seeking work, student, retired and other situation are each 0.0 %.",
+    "Part-time, self-employed, seeking work and both totals are hidden (fewer than 3 people)."
+  ],
+  "benchmark": "Full-time work is 6.0 pp below the regional 74.2 % and 6.7 pp below the 74.9 % across all schools. Whether part-time or self-employment make up the difference cannot be seen.",
+  "caveats": "With n = 22, each person moves percentages by several points, and the hidden cells leave the employment rate open.",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:42:35Z"
+}

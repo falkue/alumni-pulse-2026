@@ -1,0 +1,19 @@
+{
+  "school_id": "ALL",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Employment is high everywhere at 92.6 %; Asia lags slightly and shows the most job-seeking.",
+  "how_to_read": "Flows run from all respondents (left) to employed or not employed (middle) and then to detailed situation (right); width is the share of respondents. The hatched \"Hidden\" flow appears only in regional views, where retired and other situations are hidden for some regions.",
+  "key_findings": [
+    "Pooled across n = 1,499 respondents, 74.9 % work full-time, 7.9 % part-time and 8.0 % are self-employed.",
+    "Of the 7.4 % not employed, 4.3 % are seeking work."
+  ],
+  "benchmark": "Europe (93.2 %) and the Americas (93.0 %) are 1.9 pp and 1.7 pp above Asia (91.3 %) on employment. Asia's seeking-work share (6.6 %) is 3.6 pp above the Americas (3.0 %). Europe has the most part-time work (10.2 %), 5.3 pp above Asia (4.9 %).",
+  "caveats": "Regional samples differ in size (Americas n = 328, Asia n = 426, Europe n = 745), and retired and other situations are hidden for the Americas and Asia (fewer than 3 people).",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:42:00Z"
+}

@@ -1,0 +1,67 @@
+rules_version = '2';
+
+// =============================================================================
+// ENTWURF – Cloud Storage Security Rules für "Global Alumni Pulse 2026"
+// -----------------------------------------------------------------------------
+// Status: Entwurf, NICHT deployt.
+//
+// Ablage: reports/{schoolId}/{fileName}.pdf  (z. B. reports/S001/alumni_pulse_2026_S001.pdf)
+// Hochgeladen werden die PDFs ausschließlich serverseitig (Admin SDK / Upload-Skript);
+// Clients schreiben nie.
+//
+// Statusprüfung über Cross-Service-Rules (firestore.get): Das users-Dokument
+// ist Quelle der Wahrheit für status == 'active'. Beim ersten Deployment fragt
+// die Firebase CLI nach der Berechtigung für Storage -> Firestore; zustimmen.
+//
+// Wichtig für den Client: PDFs mit getBlob()/getBytes() laden, NICHT mit
+// getDownloadURL(). Eine Download-URL enthält ein Token, das diese Rules
+// umgeht und weitergegeben werden kann.
+// =============================================================================
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function claim(name) {
+      return request.auth.token.get(name, null);
+    }
+
+    // users-Dokument der anfragenden Person (Firestore, Standard-Datenbank).
+    // Fehlt es, schlägt der Zugriff fehl -> Ablehnung (fail closed).
+    function myUser() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Admin: Claim zuerst (kostenlos), dann users-Dokument (Rolle + Status).
+    function isAdmin() {
+      return isSignedIn()
+        && claim('role') == 'admin'
+        && myUser().role == 'admin'
+        && myUser().status == 'active';
+    }
+
+    // Aktives Mitglied genau dieser Hochschule.
+    function isSchoolMember(schoolId) {
+      return isSignedIn()
+        && claim('role') == 'school'
+        && claim('schoolId') == schoolId
+        && myUser().schoolId == schoolId
+        && myUser().status == 'active';
+    }
+
+    // PDF-Reports: lesen nur eigene Hochschule oder Admin; schreiben nie.
+    match /reports/{schoolId}/{fileName} {
+      allow read: if fileName.matches('.+[.]pdf')
+        && (isAdmin() || isSchoolMember(schoolId));
+      allow write: if false;
+    }
+
+    // Default deny für alle übrigen Pfade.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

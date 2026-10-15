@@ -1,0 +1,52 @@
+# =============================================================================
+# Pipeline settings — every threshold that influences results lives here,
+# so that methodological decisions are visible, documented and changeable.
+# =============================================================================
+
+paths:
+  # Synthetic export used in the default (synthetic) mode. Real exports are
+  # NOT configured here: in production mode the pipeline takes the newest CSV
+  # from the secure folder outside the project (see pipeline/environment.py).
+  raw_export: data/synthetic/alumni_pulse_2026_synthetic_qualtrics_with_texts.csv
+  schools: data/reference/schools.csv
+  countries: data/reference/countries.csv
+
+reference_year: 2026
+
+cleaning:
+  # A response is a "speeder" if it took less than this share of the median
+  # duration of all finished interviews.
+  speeder_share_of_median: 0.25   # QA 15.10.: 0.33 dropped 12 valid interviews
+  # Straight-lining: rating matrices with zero variance across at least this
+  # many items AND faster than this share of the median duration.
+  straightline_min_items: 15
+  straightline_share_of_median: 0.5
+  # reCAPTCHA scores below this value are treated as bots (Qualtrics: <0.5 suspicious)
+  recaptcha_min: 0.5
+  # Salary outliers: robust z-score of log(PPP FTE salary) within country of work.
+  # With salary_z_adjust_position the log salary is first taken relative to the
+  # median of the same position (QA M4: 18/19 typing errors found instead of 13/19).
+  salary_z_adjust_position: true
+  salary_robust_z_max: 4.0   # was 3.5 without position adjustment
+  # Absolute plausibility limits for annual salary in international PPP dollars
+  salary_ppp_min: 3000
+  salary_ppp_max: 1000000
+
+reporting:
+  # Minimum number of valid respondents before a school's own figures are shown
+  min_n_school: 10
+  # Minimum number of respondents for a single question/breakdown cell
+  min_n_cell: 10
+  # Small-cell protection for demographic breakdowns (age x gender etc.):
+  # a published non-zero cell must represent at least this many people;
+  # smaller cells are hidden ("< 3"), plus secondary suppression.
+  min_cell_persons: 3
+  # A benchmark group needs at least this many schools AND respondents,
+  # otherwise individual schools could be identified.
+  min_schools_benchmark: 8
+  min_n_benchmark: 50
+  # Benchmark groups each school is compared against
+  benchmark_groups: [all, region, ranking_tier, institution_type, aacsb]
+  # Demo pseudo-school "ALL" (all schools pooled, shown like one school in the
+  # customer view). Only ever produced in synthetic mode.
+  demo_all_schools_view: true

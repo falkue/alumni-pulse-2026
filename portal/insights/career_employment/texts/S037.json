@@ -1,0 +1,19 @@
+{
+  "school_id": "S037",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Full-time work reaches 85.4 %, and all non-employment consists of people seeking work.",
+  "how_to_read": "The flows run from all respondents (left) through employed or not employed (middle) to the detailed situation (right); widths show the share of respondents. The hatched 'Hidden' flow marks groups of fewer than 3 people, whose values are not shown.",
+  "key_findings": [
+    "92.7 % are employed, 85.4 % of them full-time.",
+    "7.3 % are not employed, all seeking work; not seeking work, students, retired and others are 0.0 %."
+  ],
+  "benchmark": "Employment is 1.4 pp above Asia (91.3 %) and 0.1 pp above all schools (92.6 %). Full-time work is 10.8 pp above the region (74.6 %). Seeking work at 7.3 % is 0.7 pp above Asia (6.6 %) and 3.0 pp above all schools (4.3 %).",
+  "caveats": "Based on n = 41; part-time and self-employment are hidden (fewer than 3 people).",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:38:13Z"
+}

@@ -1,0 +1,52 @@
+{
+  "school_id": "S023",
+  "school_name": "Brabant Management School",
+  "is_demo_all_schools": false,
+  "published": true,
+  "metric": "career.employment.flow",
+  "unit": "percent of all respondents; null = hidden (fewer than 3 people)",
+  "own": {
+    "n": 27,
+    "employed_total": 88.9,
+    "full_time": null,
+    "part_time": null,
+    "self_employed": 0,
+    "other_employment": 0,
+    "not_employed_total": 11.1,
+    "seeking_work": null,
+    "not_seeking_work": null,
+    "student": 0,
+    "retired": null,
+    "other_situation": 0
+  },
+  "benchmarks": {
+    "all": {
+      "n": 1499,
+      "employed_total": 92.6,
+      "full_time": 74.9,
+      "part_time": 7.9,
+      "self_employed": 8,
+      "other_employment": 1.8,
+      "not_employed_total": 7.4,
+      "seeking_work": 4.3,
+      "not_seeking_work": 1.5,
+      "student": 0,
+      "retired": 0.6,
+      "other_situation": 1
+    },
+    "region=Europe": {
+      "n": 745,
+      "employed_total": 93.2,
+      "full_time": 74.2,
+      "part_time": 10.2,
+      "self_employed": 7.2,
+      "other_employment": 1.5,
+      "not_employed_total": 6.8,
+      "seeking_work": 3.5,
+      "not_seeking_work": 1.2,
+      "student": 0,
+      "retired": 0.8,
+      "other_situation": 1.3
+    }
+  }
+}

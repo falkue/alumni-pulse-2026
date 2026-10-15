@@ -1,0 +1,19 @@
+{
+  "school_id": "S025",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Everyone responding is employed: 100.0 % against 93.2 % regionally, on a small base.",
+  "how_to_read": "Left: all respondents; middle: employed or not; right: detailed situation, widths showing share of respondents. The hatched 'Hidden' stream marks employed detail cells with fewer than 3 people.",
+  "key_findings": [
+    "Employment is 100.0 % and the not-employed total is 0.0 %; full-time work is 76.2 %.",
+    "Part-time and self-employed are hidden (fewer than 3 people), while other employment is 0.0 %."
+  ],
+  "benchmark": "Employment is 6.8 pp above the regional 93.2 % and 7.4 pp above the 92.6 % across all schools. Full-time work is 2.0 pp above the region (74.2 %) and 1.3 pp above all schools (74.9 %).",
+  "caveats": "With n = 21, percentages move by several points per person, so a full employment rate rests on very few cases.",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:42:35Z"
+}

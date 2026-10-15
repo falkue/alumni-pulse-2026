@@ -1,0 +1,19 @@
+{
+  "school_id": "S033",
+  "chart_id": "career_employment_status",
+  "language": "en",
+  "headline": "Every respondent is employed, and 89.7 % work full-time, well above the benchmarks.",
+  "how_to_read": "The flows run from all respondents (left) through employed or not employed (middle) to the detailed situation (right); widths show the share of respondents. No hatched 'Hidden' flow appears, as no group is hidden.",
+  "key_findings": [
+    "Employment is 100.0 %: 89.7 % full-time and 10.3 % part-time.",
+    "Self-employment and every not-employed group are at 0.0 %."
+  ],
+  "benchmark": "Full-time work exceeds the Americas (76.8 %) by 12.9 pp and all schools (74.9 %) by 14.8 pp. Self-employment of 0.0 % compares with 8.2 % in the region, an 8.2 pp gap worth a closer look.",
+  "caveats": "Based on n = 29, so percentages move by several points per person; no values are hidden.",
+  "generated_by": {
+    "provider": "Anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "prototype – generated with Claude Code from synthetic data"
+  },
+  "generated_at": "2026-10-15T09:38:13Z"
+}
